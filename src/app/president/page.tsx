@@ -33,7 +33,11 @@ import {
   Wand2,
   GraduationCap,
   KeyRound,
-  User
+  User,
+  Database,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle2
 } from 'lucide-react';
 import { ImageUploader } from '@/components/ImageUploader';
 
@@ -74,8 +78,18 @@ export default function PresidentPage() {
     updateAdvisor,
     deleteAdvisor,
     toggleRecruitment,
-    deleteApplication
+    deleteApplication,
+    dbStatus,
+    refreshConnection
   } = useData();
+
+  const [isTestingConnection, setIsTestingConnection] = useState(false);
+
+  const handleTestConnection = async () => {
+    setIsTestingConnection(true);
+    await refreshConnection();
+    setIsTestingConnection(false);
+  };
 
   // Login form state
   const [presidentId, setPresidentId] = useState('DSCPresident');
@@ -455,6 +469,66 @@ export default function PresidentPage() {
           <LogOut className="w-4 h-4" />
           <span>Exit Session</span>
         </button>
+      </div>
+
+      {/* DATABASE CONNECTION & STATUS BANNER */}
+      <div className={`p-4 rounded-2xl border transition-all ${
+        dbStatus.isConnected
+          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200'
+          : dbStatus.isConfigured
+          ? 'bg-rose-500/10 border-rose-500/30 text-rose-900 dark:text-rose-200'
+          : 'bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200'
+      }`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-start space-x-3">
+            <div className={`p-2 rounded-xl border mt-0.5 shrink-0 ${
+              dbStatus.isConnected
+                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                : dbStatus.isConfigured
+                ? 'bg-rose-500/20 border-rose-500/40 text-rose-400'
+                : 'bg-amber-500/20 border-amber-500/40 text-amber-400'
+            }`}>
+              {dbStatus.isConnected ? (
+                <CheckCircle2 className="w-5 h-5" />
+              ) : (
+                <AlertTriangle className="w-5 h-5" />
+              )}
+            </div>
+            <div>
+              <div className="flex items-center space-x-2 flex-wrap">
+                <span className="font-extrabold text-sm">
+                  {dbStatus.isConnected
+                    ? '🟢 Supabase Database Connected (Live Data Sync Active)'
+                    : dbStatus.isConfigured
+                    ? '🔴 Supabase Database Connection Error'
+                    : '🟡 Offline / Demo Mode (Saved to Local Browser Cache Only)'}
+                </span>
+                {dbStatus.lastSyncTime && (
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900/40 font-mono text-slate-300">
+                    Last synced: {dbStatus.lastSyncTime}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs opacity-90 mt-0.5">
+                {dbStatus.message}
+              </p>
+              {dbStatus.errorDetail && (
+                <p className="text-[11px] font-mono mt-1.5 p-2.5 rounded-lg bg-black/40 border border-current/20 text-rose-300 overflow-x-auto">
+                  {dbStatus.errorDetail}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={handleTestConnection}
+            disabled={isTestingConnection}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900/50 hover:bg-slate-900/80 border border-current/30 text-white transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isTestingConnection ? 'animate-spin' : ''}`} />
+            <span>{isTestingConnection ? 'Testing DB...' : 'Test Connection'}</span>
+          </button>
+        </div>
       </div>
 
       {/* DASHBOARD TABS */}

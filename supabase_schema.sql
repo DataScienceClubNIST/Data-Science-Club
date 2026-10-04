@@ -152,6 +152,40 @@ ALTER TABLE public.recruitment_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.recruitment_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.keep_alive_pings ENABLE ROW LEVEL SECURITY;
 
+-- DROP EXISTING POLICIES TO ALLOW RE-RUNNING SCRIPT WITHOUT ERRORS
+DROP POLICY IF EXISTS "Public read events" ON public.events;
+DROP POLICY IF EXISTS "Public read sankalp_events" ON public.sankalp_events;
+DROP POLICY IF EXISTS "Public read achievements" ON public.achievements;
+DROP POLICY IF EXISTS "Public read advisors" ON public.advisors;
+DROP POLICY IF EXISTS "Public read team_members" ON public.team_members;
+DROP POLICY IF EXISTS "Public read projects" ON public.projects;
+DROP POLICY IF EXISTS "Public read gallery" ON public.gallery;
+DROP POLICY IF EXISTS "Public read recruitment_settings" ON public.recruitment_settings;
+
+DROP POLICY IF EXISTS "Public submit applications" ON public.recruitment_applications;
+DROP POLICY IF EXISTS "Public ping keep alive" ON public.keep_alive_pings;
+DROP POLICY IF EXISTS "Public trigger keep alive ping" ON public.keep_alive_pings;
+
+DROP POLICY IF EXISTS "Admin write events" ON public.events;
+DROP POLICY IF EXISTS "Admin write sankalp_events" ON public.sankalp_events;
+DROP POLICY IF EXISTS "Admin write achievements" ON public.achievements;
+DROP POLICY IF EXISTS "Admin write advisors" ON public.advisors;
+DROP POLICY IF EXISTS "Admin write team_members" ON public.team_members;
+DROP POLICY IF EXISTS "Admin write projects" ON public.projects;
+DROP POLICY IF EXISTS "Admin write gallery" ON public.gallery;
+DROP POLICY IF EXISTS "Admin write recruitment_settings" ON public.recruitment_settings;
+DROP POLICY IF EXISTS "Admin manage applications" ON public.recruitment_applications;
+
+DROP POLICY IF EXISTS "Enable full access events" ON public.events;
+DROP POLICY IF EXISTS "Enable full access sankalp_events" ON public.sankalp_events;
+DROP POLICY IF EXISTS "Enable full access achievements" ON public.achievements;
+DROP POLICY IF EXISTS "Enable full access advisors" ON public.advisors;
+DROP POLICY IF EXISTS "Enable full access team_members" ON public.team_members;
+DROP POLICY IF EXISTS "Enable full access projects" ON public.projects;
+DROP POLICY IF EXISTS "Enable full access gallery" ON public.gallery;
+DROP POLICY IF EXISTS "Enable full access recruitment_settings" ON public.recruitment_settings;
+DROP POLICY IF EXISTS "Enable full access recruitment_applications" ON public.recruitment_applications;
+
 -- READ POLICIES (Allow Public & Admin to View Data)
 CREATE POLICY "Public read events" ON public.events FOR SELECT USING (true);
 CREATE POLICY "Public read sankalp_events" ON public.sankalp_events FOR SELECT USING (true);
@@ -162,31 +196,33 @@ CREATE POLICY "Public read projects" ON public.projects FOR SELECT USING (true);
 CREATE POLICY "Public read gallery" ON public.gallery FOR SELECT USING (true);
 CREATE POLICY "Public read recruitment_settings" ON public.recruitment_settings FOR SELECT USING (true);
 
--- PUBLIC WRITE RESTRICTIONS (Public can ONLY insert into recruitment_applications & keep_alive_pings)
+-- PUBLIC WRITE RESTRICTIONS
 CREATE POLICY "Public submit applications" ON public.recruitment_applications FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public ping keep alive" ON public.keep_alive_pings FOR SELECT USING (true);
 CREATE POLICY "Public trigger keep alive ping" ON public.keep_alive_pings FOR INSERT WITH CHECK (true);
 
--- ADMIN WRITE POLICIES (Authenticated users or Service Role full access)
-CREATE POLICY "Admin write events" ON public.events FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write sankalp_events" ON public.sankalp_events FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write achievements" ON public.achievements FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write advisors" ON public.advisors FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write team_members" ON public.team_members FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write projects" ON public.projects FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write gallery" ON public.gallery FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin write recruitment_settings" ON public.recruitment_settings FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
-CREATE POLICY "Admin manage applications" ON public.recruitment_applications FOR ALL USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');
+-- ADMIN / APP FULL ACCESS POLICIES
+CREATE POLICY "Enable full access events" ON public.events FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access sankalp_events" ON public.sankalp_events FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access achievements" ON public.achievements FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access advisors" ON public.advisors FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access team_members" ON public.team_members FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access projects" ON public.projects FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access gallery" ON public.gallery FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access recruitment_settings" ON public.recruitment_settings FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access recruitment_applications" ON public.recruitment_applications FOR ALL USING (true) WITH CHECK (true);
 
 -- ==============================================================================
 -- SUPABASE STORAGE BUCKET FOR IMAGE UPLOADS
 -- ==============================================================================
--- Creates the 'club-assets' storage bucket and sets up public read & upload policies.
--- ==============================================================================
-
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('club-assets', 'club-assets', true)
 ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "Public Read Assets" ON storage.objects;
+DROP POLICY IF EXISTS "Public & Admin Upload Assets" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Update Assets" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Delete Assets" ON storage.objects;
 
 CREATE POLICY "Public Read Assets" ON storage.objects
 FOR SELECT USING (bucket_id = 'club-assets');
