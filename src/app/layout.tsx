@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { DataProvider } from '@/context/DataContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { SupabaseKeepAlive } from '@/components/SupabaseKeepAlive';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website',
-  },
+    },
 };
 
 export default function RootLayout({
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-white`}>
         <ThemeProvider>
           <DataProvider>
+            <SupabaseKeepAlive />
             <Navbar />
             <main className="flex-grow">
               {children}

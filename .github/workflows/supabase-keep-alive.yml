@@ -1,0 +1,25 @@
+name: Supabase 48-Hour Keep-Alive Cron
+
+on:
+  schedule:
+    # Runs every 48 hours (at 00:00 UTC every 2nd day)
+    - cron: '0 0 */2 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  ping-supabase:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Keep-Alive API Endpoint
+        run: |
+          echo "Pinging Website Supabase Keep-Alive Route..."
+          curl -f -X GET "${{ secrets.PUBLIC_SITE_URL || 'https://datascienceclub-nist.vercel.app' }}/api/keep-alive" || echo "Website ping completed."
+
+      - name: Direct Supabase Health Ping (Backup)
+        if: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL != '' }}
+        run: |
+          echo "Pinging Supabase REST API directly..."
+          curl -f -X GET "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/events?select=id&limit=1" \
+            -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" || echo "Supabase direct ping completed."

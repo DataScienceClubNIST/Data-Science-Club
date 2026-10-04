@@ -35,6 +35,7 @@ import {
   KeyRound,
   User
 } from 'lucide-react';
+import { ImageUploader } from '@/components/ImageUploader';
 
 export default function PresidentPage() {
   const { 
@@ -1125,10 +1126,12 @@ export default function PresidentPage() {
                   <label className="text-[11px] font-bold text-slate-400 block mb-1">Description *</label>
                   <textarea rows={3} required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.description} onChange={e => setEventForm({...eventForm, description: e.target.value})} />
                 </div>
-                <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Image URL</label>
-                  <input placeholder="Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.image} onChange={e => setEventForm({...eventForm, image: e.target.value})} />
-                </div>
+                <ImageUploader
+                  label="Event Image / Banner"
+                  folder="events"
+                  value={eventForm.image}
+                  onChange={url => setEventForm({...eventForm, image: url})}
+                />
                 <div>
                   <label className="text-[11px] font-bold text-slate-400 block mb-1">Registration Link (Optional)</label>
                   <input placeholder="Registration Link" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.registration_link} onChange={e => setEventForm({...eventForm, registration_link: e.target.value})} />
@@ -1153,7 +1156,12 @@ export default function PresidentPage() {
                 <input required placeholder="Date String" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.date} onChange={e => setSankalpForm({...sankalpForm, date: e.target.value})} />
                 <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.venue} onChange={e => setSankalpForm({...sankalpForm, venue: e.target.value})} />
                 <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.description} onChange={e => setSankalpForm({...sankalpForm, description: e.target.value})} />
-                <input placeholder="Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.image} onChange={e => setSankalpForm({...sankalpForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Sankalp Activity Banner"
+                  folder="sankalp"
+                  value={sankalpForm.image}
+                  onChange={url => setSankalpForm({...sankalpForm, image: url})}
+                />
                 <input placeholder="Registration Link" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.registration_link} onChange={e => setSankalpForm({...sankalpForm, registration_link: e.target.value})} />
                 <input placeholder="Result Notes" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.result} onChange={e => setSankalpForm({...sankalpForm, result: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 font-bold text-white cursor-pointer hover:bg-purple-500">Update Sankalp Activity</button>
@@ -1176,7 +1184,12 @@ export default function PresidentPage() {
                 </select>
                 <input type="number" required placeholder="Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={achievementForm.year} onChange={e => setAchievementForm({...achievementForm, year: Number(e.target.value)})} />
                 <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={achievementForm.description} onChange={e => setAchievementForm({...achievementForm, description: e.target.value})} />
-                <input placeholder="Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={achievementForm.image} onChange={e => setAchievementForm({...achievementForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Achievement Image / Certificate"
+                  folder="achievements"
+                  value={achievementForm.image || ''}
+                  onChange={url => setAchievementForm({...achievementForm, image: url})}
+                />
                 <button type="submit" className="w-full py-3 rounded-xl bg-amber-600 font-bold text-white cursor-pointer hover:bg-amber-500">Update Achievement</button>
               </form>
             )}
@@ -1206,7 +1219,12 @@ export default function PresidentPage() {
                   <option value="Web Development">Web Development</option>
                 </select>
                 <input placeholder="Role (e.g. Club President, Tech Head)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.role} onChange={e => setTeamForm({...teamForm, role: e.target.value})} />
-                <input required placeholder="Photo URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.photo} onChange={e => setTeamForm({...teamForm, photo: e.target.value})} />
+                <ImageUploader
+                  label="Member Photo"
+                  folder="team"
+                  value={teamForm.photo}
+                  onChange={url => setTeamForm({...teamForm, photo: url})}
+                />
                 <input placeholder="LinkedIn URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.linkedin} onChange={e => setTeamForm({...teamForm, linkedin: e.target.value})} />
                 <input placeholder="GitHub URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.github} onChange={e => setTeamForm({...teamForm, github: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Update Member Card</button>
@@ -1229,7 +1247,12 @@ export default function PresidentPage() {
                   <option value="Web Development">Web Development</option>
                 </select>
                 <textarea required placeholder="Project Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} />
-                <input required placeholder="Cover Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Project Cover Image"
+                  folder="projects"
+                  value={projectForm.image}
+                  onChange={url => setProjectForm({...projectForm, image: url})}
+                />
                 <input placeholder="Live Demo URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.project_url} onChange={e => setProjectForm({...projectForm, project_url: e.target.value})} />
                 <input placeholder="GitHub Repository URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.github_url} onChange={e => setProjectForm({...projectForm, github_url: e.target.value})} />
                 <label className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 font-bold cursor-pointer">
@@ -1256,7 +1279,12 @@ export default function PresidentPage() {
                   <option value="Projects">Projects</option>
                 </select>
                 <input type="number" required placeholder="Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={galleryForm.year} onChange={e => setGalleryForm({...galleryForm, year: Number(e.target.value)})} />
-                <input required placeholder="Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={galleryForm.image} onChange={e => setGalleryForm({...galleryForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Gallery Image"
+                  folder="gallery"
+                  value={galleryForm.image}
+                  onChange={url => setGalleryForm({...galleryForm, image: url})}
+                />
                 <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 font-bold text-white cursor-pointer hover:bg-purple-500">Update Gallery Image</button>
               </form>
             )}
@@ -1276,7 +1304,12 @@ export default function PresidentPage() {
                 <input required placeholder="Designation" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.designation} onChange={e => setAdvisorForm({...advisorForm, designation: e.target.value})} />
                 <input required placeholder="Department" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.department} onChange={e => setAdvisorForm({...advisorForm, department: e.target.value})} />
                 <textarea required placeholder="Short Biography" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.bio} onChange={e => setAdvisorForm({...advisorForm, bio: e.target.value})} />
-                <input required placeholder="Photo URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.photo} onChange={e => setAdvisorForm({...advisorForm, photo: e.target.value})} />
+                <ImageUploader
+                  label="Advisor Photo"
+                  folder="advisors"
+                  value={advisorForm.photo}
+                  onChange={url => setAdvisorForm({...advisorForm, photo: url})}
+                />
                 <input placeholder="LinkedIn URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.linkedin} onChange={e => setAdvisorForm({...advisorForm, linkedin: e.target.value})} />
                 <input placeholder="Email" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.email} onChange={e => setAdvisorForm({...advisorForm, email: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Update Advisor Info</button>
@@ -1342,7 +1375,12 @@ export default function PresidentPage() {
                 <input required placeholder="Date string (e.g. March 15, 2026)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.date} onChange={e => setEventForm({...eventForm, date: e.target.value})} />
                 <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.venue} onChange={e => setEventForm({...eventForm, venue: e.target.value})} />
                 <textarea required placeholder="Event Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.description} onChange={e => setEventForm({...eventForm, description: e.target.value})} />
-                <input placeholder="Image URL (Unsplash or hosted)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.image} onChange={e => setEventForm({...eventForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Event Image / Banner"
+                  folder="events"
+                  value={eventForm.image}
+                  onChange={url => setEventForm({...eventForm, image: url})}
+                />
                 <input placeholder="Registration Link (Optional)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.registration_link} onChange={e => setEventForm({...eventForm, registration_link: e.target.value})} />
                 <input placeholder="Result Notes (Optional)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.result} onChange={e => setEventForm({...eventForm, result: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Publish Event Card</button>
@@ -1360,7 +1398,12 @@ export default function PresidentPage() {
                 <input required placeholder="Date String" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.date} onChange={e => setSankalpForm({...sankalpForm, date: e.target.value})} />
                 <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.venue} onChange={e => setSankalpForm({...sankalpForm, venue: e.target.value})} />
                 <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.description} onChange={e => setSankalpForm({...sankalpForm, description: e.target.value})} />
-                <input placeholder="Banner Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.image} onChange={e => setSankalpForm({...sankalpForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Sankalp Activity Banner"
+                  folder="sankalp"
+                  value={sankalpForm.image}
+                  onChange={url => setSankalpForm({...sankalpForm, image: url})}
+                />
                 <input placeholder="Registration Link" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.registration_link} onChange={e => setSankalpForm({...sankalpForm, registration_link: e.target.value})} />
                 <input placeholder="Result Notes" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.result} onChange={e => setSankalpForm({...sankalpForm, result: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 font-bold text-white cursor-pointer hover:bg-purple-500">Publish Sankalp Activity</button>
@@ -1382,7 +1425,12 @@ export default function PresidentPage() {
                 </select>
                 <input type="number" required placeholder="Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={achievementForm.year} onChange={e => setAchievementForm({...achievementForm, year: Number(e.target.value)})} />
                 <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={achievementForm.description} onChange={e => setAchievementForm({...achievementForm, description: e.target.value})} />
-                <input placeholder="Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={achievementForm.image} onChange={e => setAchievementForm({...achievementForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Achievement Image / Certificate"
+                  folder="achievements"
+                  value={achievementForm.image || ''}
+                  onChange={url => setAchievementForm({...achievementForm, image: url})}
+                />
                 <button type="submit" className="w-full py-3 rounded-xl bg-amber-600 font-bold text-white cursor-pointer hover:bg-amber-500">Publish Achievement Card</button>
               </form>
             )}
@@ -1411,7 +1459,12 @@ export default function PresidentPage() {
                   <option value="Web Development">Web Development</option>
                 </select>
                 <input placeholder="Role (e.g. Club President, Tech Head)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.role} onChange={e => setTeamForm({...teamForm, role: e.target.value})} />
-                <input required placeholder="Photo URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.photo} onChange={e => setTeamForm({...teamForm, photo: e.target.value})} />
+                <ImageUploader
+                  label="Member Photo"
+                  folder="team"
+                  value={teamForm.photo}
+                  onChange={url => setTeamForm({...teamForm, photo: url})}
+                />
                 <input placeholder="LinkedIn URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.linkedin} onChange={e => setTeamForm({...teamForm, linkedin: e.target.value})} />
                 <input placeholder="GitHub URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.github} onChange={e => setTeamForm({...teamForm, github: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Publish Team Member</button>
@@ -1433,7 +1486,12 @@ export default function PresidentPage() {
                   <option value="Web Development">Web Development</option>
                 </select>
                 <textarea required placeholder="Project Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} />
-                <input required placeholder="Cover Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.image} onChange={e => setProjectForm({...projectForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Project Cover Image"
+                  folder="projects"
+                  value={projectForm.image}
+                  onChange={url => setProjectForm({...projectForm, image: url})}
+                />
                 <input placeholder="Live Demo URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.project_url} onChange={e => setProjectForm({...projectForm, project_url: e.target.value})} />
                 <input placeholder="GitHub Repository URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={projectForm.github_url} onChange={e => setProjectForm({...projectForm, github_url: e.target.value})} />
                 <label className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 font-bold cursor-pointer">
@@ -1459,7 +1517,12 @@ export default function PresidentPage() {
                   <option value="Projects">Projects</option>
                 </select>
                 <input type="number" required placeholder="Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={galleryForm.year} onChange={e => setGalleryForm({...galleryForm, year: Number(e.target.value)})} />
-                <input required placeholder="Image URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={galleryForm.image} onChange={e => setGalleryForm({...galleryForm, image: e.target.value})} />
+                <ImageUploader
+                  label="Gallery Image"
+                  folder="gallery"
+                  value={galleryForm.image}
+                  onChange={url => setGalleryForm({...galleryForm, image: url})}
+                />
                 <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 font-bold text-white cursor-pointer hover:bg-purple-500">Publish Gallery Item</button>
               </form>
             )}
@@ -1478,7 +1541,12 @@ export default function PresidentPage() {
                 <input required placeholder="Designation" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.designation} onChange={e => setAdvisorForm({...advisorForm, designation: e.target.value})} />
                 <input required placeholder="Department" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.department} onChange={e => setAdvisorForm({...advisorForm, department: e.target.value})} />
                 <textarea required placeholder="Short Biography" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.bio} onChange={e => setAdvisorForm({...advisorForm, bio: e.target.value})} />
-                <input required placeholder="Photo URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.photo} onChange={e => setAdvisorForm({...advisorForm, photo: e.target.value})} />
+                <ImageUploader
+                  label="Advisor Photo"
+                  folder="advisors"
+                  value={advisorForm.photo}
+                  onChange={url => setAdvisorForm({...advisorForm, photo: url})}
+                />
                 <input placeholder="LinkedIn URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.linkedin} onChange={e => setAdvisorForm({...advisorForm, linkedin: e.target.value})} />
                 <input placeholder="Email" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={advisorForm.email} onChange={e => setAdvisorForm({...advisorForm, email: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Publish Advisor Profile</button>

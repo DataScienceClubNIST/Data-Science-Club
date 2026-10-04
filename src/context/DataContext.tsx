@@ -92,9 +92,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [applications, setApplications] = useState<RecruitmentApplication[]>([]);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
 
-  // Initialize data from LocalStorage / Supabase
+  // Initialize data from LocalStorage & Supabase
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
       const storedEvents = localStorage.getItem('dsc_events');
       const storedSankalp = localStorage.getItem('dsc_sankalp');
       const storedAchievements = localStorage.getItem('dsc_achievements');
@@ -106,6 +106,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const storedApps = localStorage.getItem('dsc_applications');
       const storedAdmin = localStorage.getItem('dsc_admin_session');
 
+      // Default local state
       setEvents(storedEvents ? JSON.parse(storedEvents) : INITIAL_EVENTS);
       setSankalpEvents(storedSankalp ? JSON.parse(storedSankalp) : INITIAL_SANKALP_EVENTS);
       setAchievements(storedAchievements ? JSON.parse(storedAchievements) : INITIAL_ACHIEVEMENTS);
@@ -118,6 +119,45 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
       if (storedAdmin) {
         setAdminUser(JSON.parse(storedAdmin));
+      }
+
+      // Fetch live records from Supabase Database if configured
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const [
+            { data: eventsData },
+            { data: sankalpData },
+            { data: achData },
+            { data: advData },
+            { data: teamData },
+            { data: projData },
+            { data: galData },
+            { data: recData },
+            { data: appData }
+          ] = await Promise.all([
+            supabase.from('events').select('*').order('created_at', { ascending: false }),
+            supabase.from('sankalp_events').select('*').order('created_at', { ascending: false }),
+            supabase.from('achievements').select('*').order('created_at', { ascending: false }),
+            supabase.from('advisors').select('*'),
+            supabase.from('team_members').select('*'),
+            supabase.from('projects').select('*'),
+            supabase.from('gallery').select('*'),
+            supabase.from('recruitment_settings').select('*').limit(1),
+            supabase.from('recruitment_applications').select('*').order('submitted_at', { ascending: false })
+          ]);
+
+          if (eventsData && eventsData.length > 0) setEvents(eventsData);
+          if (sankalpData && sankalpData.length > 0) setSankalpEvents(sankalpData);
+          if (achData && achData.length > 0) setAchievements(achData);
+          if (advData && advData.length > 0) setAdvisors(advData);
+          if (teamData && teamData.length > 0) setTeamMembers(teamData);
+          if (projData && projData.length > 0) setProjects(projData);
+          if (galData && galData.length > 0) setGallery(galData);
+          if (recData && recData.length > 0) setRecruitmentSettings(recData[0]);
+          if (appData && appData.length > 0) setApplications(appData);
+        } catch (e) {
+          console.warn('[Supabase Sync]: Failed to fetch remote database data, using local fallback.', e);
+        }
       }
     };
 
@@ -151,156 +191,340 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Events CRUD
-  const addEvent = (eventData: Omit<ClubEvent, 'id'>) => {
+  const addEvent = async (eventData: Omit<ClubEvent, 'id'>) => {
     const newEvent: ClubEvent = { ...eventData, id: `evt-${Date.now()}` };
     const updated = [newEvent, ...events];
     setEvents(updated);
     saveStorage('dsc_events', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('events').insert([newEvent]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateEvent = (id: string, eventData: Partial<ClubEvent>) => {
+  const updateEvent = async (id: string, eventData: Partial<ClubEvent>) => {
     const updated = events.map(e => e.id === id ? { ...e, ...eventData } : e);
     setEvents(updated);
     saveStorage('dsc_events', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('events').update(eventData).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteEvent = (id: string) => {
+  const deleteEvent = async (id: string) => {
     const updated = events.filter(e => e.id !== id);
     setEvents(updated);
     saveStorage('dsc_events', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('events').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Sankalp CRUD
-  const addSankalpEvent = (eventData: Omit<SankalpEvent, 'id'>) => {
+  const addSankalpEvent = async (eventData: Omit<SankalpEvent, 'id'>) => {
     const newEvent: SankalpEvent = { ...eventData, id: `snk-${Date.now()}` };
     const updated = [newEvent, ...sankalpEvents];
     setSankalpEvents(updated);
     saveStorage('dsc_sankalp', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('sankalp_events').insert([newEvent]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateSankalpEvent = (id: string, eventData: Partial<SankalpEvent>) => {
+  const updateSankalpEvent = async (id: string, eventData: Partial<SankalpEvent>) => {
     const updated = sankalpEvents.map(e => e.id === id ? { ...e, ...eventData } : e);
     setSankalpEvents(updated);
     saveStorage('dsc_sankalp', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('sankalp_events').update(eventData).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteSankalpEvent = (id: string) => {
+  const deleteSankalpEvent = async (id: string) => {
     const updated = sankalpEvents.filter(e => e.id !== id);
     setSankalpEvents(updated);
     saveStorage('dsc_sankalp', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('sankalp_events').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Achievements CRUD
-  const addAchievement = (data: Omit<Achievement, 'id'>) => {
+  const addAchievement = async (data: Omit<Achievement, 'id'>) => {
     const newItem: Achievement = { ...data, id: `ach-${Date.now()}` };
     const updated = [newItem, ...achievements];
     setAchievements(updated);
     saveStorage('dsc_achievements', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('achievements').insert([newItem]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateAchievement = (id: string, data: Partial<Achievement>) => {
+  const updateAchievement = async (id: string, data: Partial<Achievement>) => {
     const updated = achievements.map(a => a.id === id ? { ...a, ...data } : a);
     setAchievements(updated);
     saveStorage('dsc_achievements', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('achievements').update(data).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteAchievement = (id: string) => {
+  const deleteAchievement = async (id: string) => {
     const updated = achievements.filter(a => a.id !== id);
     setAchievements(updated);
     saveStorage('dsc_achievements', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('achievements').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Team CRUD
-  const addTeamMember = (data: Omit<TeamMember, 'id'>) => {
+  const addTeamMember = async (data: Omit<TeamMember, 'id'>) => {
     const newItem: TeamMember = { ...data, id: `tm-${Date.now()}` };
     const updated = [newItem, ...teamMembers];
     setTeamMembers(updated);
     saveStorage('dsc_team', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('team_members').insert([newItem]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateTeamMember = (id: string, data: Partial<TeamMember>) => {
+  const updateTeamMember = async (id: string, data: Partial<TeamMember>) => {
     const updated = teamMembers.map(t => t.id === id ? { ...t, ...data } : t);
     setTeamMembers(updated);
     saveStorage('dsc_team', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('team_members').update(data).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteTeamMember = (id: string) => {
+  const deleteTeamMember = async (id: string) => {
     const updated = teamMembers.filter(t => t.id !== id);
     setTeamMembers(updated);
     saveStorage('dsc_team', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('team_members').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Projects CRUD
-  const addProject = (data: Omit<Project, 'id'>) => {
+  const addProject = async (data: Omit<Project, 'id'>) => {
     const newItem: Project = { ...data, id: `proj-${Date.now()}` };
     const updated = [newItem, ...projects];
     setProjects(updated);
     saveStorage('dsc_projects', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('projects').insert([newItem]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateProject = (id: string, data: Partial<Project>) => {
+  const updateProject = async (id: string, data: Partial<Project>) => {
     const updated = projects.map(p => p.id === id ? { ...p, ...data } : p);
     setProjects(updated);
     saveStorage('dsc_projects', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('projects').update(data).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteProject = (id: string) => {
+  const deleteProject = async (id: string) => {
     const updated = projects.filter(p => p.id !== id);
     setProjects(updated);
     saveStorage('dsc_projects', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('projects').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Gallery CRUD
-  const addGalleryItem = (data: Omit<GalleryItem, 'id'>) => {
+  const addGalleryItem = async (data: Omit<GalleryItem, 'id'>) => {
     const newItem: GalleryItem = { ...data, id: `gal-${Date.now()}` };
     const updated = [newItem, ...gallery];
     setGallery(updated);
     saveStorage('dsc_gallery', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('gallery').insert([newItem]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateGalleryItem = (id: string, data: Partial<GalleryItem>) => {
+  const updateGalleryItem = async (id: string, data: Partial<GalleryItem>) => {
     const updated = gallery.map(g => g.id === id ? { ...g, ...data } : g);
     setGallery(updated);
     saveStorage('dsc_gallery', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('gallery').update(data).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteGalleryItem = (id: string) => {
+  const deleteGalleryItem = async (id: string) => {
     const updated = gallery.filter(g => g.id !== id);
     setGallery(updated);
     saveStorage('dsc_gallery', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('gallery').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Advisor CRUD
-  const addAdvisor = (data: Omit<Advisor, 'id'>) => {
+  const addAdvisor = async (data: Omit<Advisor, 'id'>) => {
     const newItem: Advisor = { ...data, id: `adv-${Date.now()}` };
     const updated = [...advisors, newItem];
     setAdvisors(updated);
     saveStorage('dsc_advisors', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('advisors').insert([newItem]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateAdvisor = (id: string, data: Partial<Advisor>) => {
+  const updateAdvisor = async (id: string, data: Partial<Advisor>) => {
     const updated = advisors.map(a => a.id === id ? { ...a, ...data } : a);
     setAdvisors(updated);
     saveStorage('dsc_advisors', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('advisors').update(data).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const deleteAdvisor = (id: string) => {
+  const deleteAdvisor = async (id: string) => {
     const updated = advisors.filter(a => a.id !== id);
     setAdvisors(updated);
     saveStorage('dsc_advisors', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('advisors').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   // Recruitment actions
-  const toggleRecruitment = (isOpen: boolean) => {
+  const toggleRecruitment = async (isOpen: boolean) => {
     const updated = { ...recruitmentSettings, is_open: isOpen };
     setRecruitmentSettings(updated);
     saveStorage('dsc_rec_settings', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('recruitment_settings').upsert([{ id: 1, ...updated }]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
-  const updateRecruitmentSettings = (settings: Partial<RecruitmentSettings>) => {
+  const updateRecruitmentSettings = async (settings: Partial<RecruitmentSettings>) => {
     const updated = { ...recruitmentSettings, ...settings };
     setRecruitmentSettings(updated);
     saveStorage('dsc_rec_settings', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('recruitment_settings').upsert([{ id: 1, ...updated }]);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   const submitApplication = async (data: Omit<RecruitmentApplication, 'id' | 'submitted_at' | 'status'>): Promise<boolean> => {
@@ -326,10 +550,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     return true;
   };
 
-  const deleteApplication = (id: string) => {
+  const deleteApplication = async (id: string) => {
     const updated = applications.filter(a => a.id !== id);
     setApplications(updated);
     saveStorage('dsc_applications', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('recruitment_applications').delete().eq('id', id);
+      } catch (e) {
+        console.warn('Supabase sync note:', e);
+      }
+    }
   };
 
   return (
