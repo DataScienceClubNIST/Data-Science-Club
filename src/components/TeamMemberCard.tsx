@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { TeamMember, Advisor } from '@/types';
 import { Mail } from 'lucide-react';
 import { LinkedinIcon, GithubIcon } from '@/components/SocialIcons';
@@ -17,11 +17,11 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
     return (
       <div className="glass-card shine-hover p-6 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 relative overflow-hidden group">
         <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-cyan-500/30 shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-300">
-          <Image
+          <SafeImage
             src={adv.photo}
+            fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
             alt={adv.name}
             fill
-            className="object-cover"
           />
         </div>
 
@@ -66,11 +66,12 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
   return (
     <div className="glass-card shine-hover p-4 flex flex-col items-center text-center group relative overflow-hidden transition-all duration-300">
       <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-700 group-hover:border-cyan-400 transition-colors duration-300 mb-3 shadow-md">
-        <Image
-          src={tm.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+        <SafeImage
+          src={tm.photo}
+          fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
           alt={tm.name}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-300"
+          className="group-hover:scale-110 transition-transform duration-300"
         />
       </div>
 

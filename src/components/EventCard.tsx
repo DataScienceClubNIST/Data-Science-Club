@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { ClubEvent, SankalpEvent } from '@/types';
 import { Calendar, MapPin, ExternalLink, Trophy, X } from 'lucide-react';
 
@@ -18,11 +18,12 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
     <>
       <div className="glass-card shine-hover overflow-hidden flex flex-col justify-between group">
         <div className="relative h-48 w-full overflow-hidden bg-slate-800">
-          <Image
-            src={event.image || '/images/sankalp_banner.jpg'}
+          <SafeImage
+            src={event.image}
+            fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
             alt={event.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
           
@@ -94,11 +95,11 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
             </button>
 
             <div className="relative h-64 w-full bg-slate-950">
-              <Image
-                src={event.image || '/images/sankalp_banner.jpg'}
+              <SafeImage
+                src={event.image}
+                fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
                 alt={event.title}
                 fill
-                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-6 right-6">

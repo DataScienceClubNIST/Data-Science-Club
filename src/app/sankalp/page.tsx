@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import EventCard from '@/components/EventCard';
 import AnimeStaggerGrid from '@/components/AnimeStaggerGrid';
 import { useData } from '@/context/DataContext';
@@ -23,11 +23,12 @@ export default function SankalpPage() {
       {/* HEADER BANNER */}
       <div className="relative rounded-3xl overflow-hidden border border-purple-500/30 bg-slate-950 p-8 sm:p-14 text-white shadow-2xl">
         <div className="absolute inset-0 z-0">
-          <Image
+          <SafeImage
             src="/images/sankalp_banner.jpg"
+            fallbackSrc="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
             alt="Sankalp NIST Tech Fest"
             fill
-            className="object-cover opacity-35"
+            className="opacity-35"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />

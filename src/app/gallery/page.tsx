@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import AnimeStaggerGrid from '@/components/AnimeStaggerGrid';
 import AnimeHeading from '@/components/AnimeHeading';
 import { useData } from '@/context/DataContext';
@@ -85,11 +85,12 @@ export default function GalleryPage() {
               className="glass-card shine-hover overflow-hidden group cursor-pointer relative"
             >
               <div className="relative h-60 w-full bg-slate-800">
-                <Image
+                <SafeImage
                   src={item.image}
+                  fallbackSrc="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
                   alt={item.title}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="p-3 rounded-full bg-slate-900/80 text-white">
@@ -135,11 +136,12 @@ export default function GalleryPage() {
             <X className="w-6 h-6" />
           </button>
           <div className="relative max-w-4xl max-h-[85vh] w-full h-full rounded-2xl overflow-hidden shadow-2xl">
-            <Image
+            <SafeImage
               src={activeImage}
+              fallbackSrc="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
               alt="Gallery Lightbox Preview"
               fill
-              className="object-contain"
+              fit="contain"
             />
           </div>
         </div>

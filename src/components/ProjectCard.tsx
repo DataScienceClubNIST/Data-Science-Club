@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { Project } from '@/types';
 import { ExternalLink, Sparkles } from 'lucide-react';
 import { GithubIcon } from '@/components/SocialIcons';
@@ -15,11 +15,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     <div className="glass-card shine-hover overflow-hidden flex flex-col justify-between group">
       <div>
         <div className="relative h-48 w-full overflow-hidden bg-slate-800">
-          <Image
-            src={project.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80'}
+          <SafeImage
+            src={project.image}
+            fallbackSrc="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
             alt={project.name}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
           

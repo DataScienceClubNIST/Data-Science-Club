@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { Achievement } from '@/types';
 import { Trophy, Medal, Award, Star } from 'lucide-react';
 
@@ -28,11 +28,12 @@ export default function AchievementCard({ achievement }: AchievementCardProps) {
       <div>
         {achievement.image && (
           <div className="relative h-44 w-full rounded-xl overflow-hidden mb-4 bg-slate-800">
-            <Image
+            <SafeImage
               src={achievement.image}
+              fallbackSrc="https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=800&q=80"
               alt={achievement.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="group-hover:scale-105 transition-transform duration-500"
             />
           </div>
         )}
