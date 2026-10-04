@@ -164,11 +164,7 @@ export default function Footer() {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
           <p>© {currentYear} Data Science Club, NIST University. All rights reserved.</p>
           <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-            <Link href="/admin" className="hover:text-cyan-400 transition-colors">
-              Admin Access
-            </Link>
-            <span>•</span>
-            <span>Built with Next.js & Supabase</span>
+            <span>Official Student Organization • NIST University</span>
           </div>
         </div>
       </div>

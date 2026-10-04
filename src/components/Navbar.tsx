@@ -140,20 +140,8 @@ export default function Navbar() {
             </div>
           </nav>
 
-          {/* RIGHT ACTIONS: ADMIN LINK & THEME TOGGLE */}
+          {/* RIGHT ACTIONS: THEME TOGGLE */}
           <div className="hidden lg:flex items-center space-x-3">
-            <Link
-              href="/admin"
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
-                isAdminLoggedIn
-                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/25'
-                  : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:text-cyan-600 dark:hover:text-cyan-400'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>{isAdminLoggedIn ? (adminUser?.role || 'Admin Portal') : 'Admin Portal'}</span>
-            </Link>
-            
             <ThemeToggle />
           </div>
 
@@ -190,7 +178,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="border-t border-slate-200 dark:border-slate-800 pt-3 mb-4">
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-3">
             <div className="px-4 text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
               Others
             </div>
@@ -213,16 +201,6 @@ export default function Navbar() {
                 );
               })}
             </div>
-          </div>
-
-          <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex items-center justify-between px-2">
-            <Link
-              href="/admin"
-              className="flex items-center space-x-2 text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3.5 py-2 rounded-xl border border-emerald-500/30"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Admin Access</span>
-            </Link>
           </div>
         </div>
       )}

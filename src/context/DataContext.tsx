@@ -40,7 +40,7 @@ interface DataContextType {
   isAdminLoggedIn: boolean;
 
   // Admin Actions
-  loginAdmin: (role: 'Tech Head' | 'Club President' | 'Junior Secretary', key: string) => boolean;
+  loginAdmin: (username: string, passcode: string) => boolean;
   logoutAdmin: () => void;
   
   // CRUD Actions
@@ -130,14 +130,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Auth actions
-  const loginAdmin = (role: 'Tech Head' | 'Club President' | 'Junior Secretary', key: string) => {
-    // Demo key check: 'nistdsc2026' or 'admin123'
-    if (key === 'nistdsc2026' || key === 'admin123') {
+  const loginAdmin = (username: string, passcode: string) => {
+    if (username.trim() === 'DSCPresident' && passcode.trim() === 'DSCPresident@1') {
       const user: AdminUser = {
-        id: `admin-${Date.now()}`,
-        name: `${role} Administrator`,
-        email: `${role.toLowerCase().replace(/\s+/g, '')}@nist.edu`,
-        role
+        id: `admin-president`,
+        name: `Club President`,
+        email: `dscpresident@nist.edu`,
+        role: 'Club President'
       };
       setAdminUser(user);
       saveStorage('dsc_admin_session', user);
