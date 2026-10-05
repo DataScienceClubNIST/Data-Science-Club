@@ -49,9 +49,9 @@ export default function AnimeHeading({ text, highlightText, className = "text-3x
           </span>
         ))}
         {highlightText && (
-          <span className="gradient-text ml-2">
+          <span className="ml-2 inline-block">
             {highlightText.split('').map((char, index) => (
-              <span key={`h-${index}`} className="anime-letter inline-block opacity-0">
+              <span key={`h-${index}`} className="gradient-text anime-letter inline-block opacity-0">
                 {char === ' ' ? '\u00A0' : char}
               </span>
             ))}
