@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  Mail, 
-  MapPin, 
-  Send, 
-  ArrowUpRight, 
+import {
+  Mail,
+  MapPin,
+  Send,
+  ArrowUpRight,
   ExternalLink
 } from 'lucide-react';
 import { InstagramIcon, LinkedinIcon, GithubIcon } from '@/components/SocialIcons';
@@ -16,7 +16,7 @@ export default function ContactPage() {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
 
-  const clubEmail = 'datascienceclub@nist.edu';
+  const clubEmail = 'data.science.club@nist.edu';
 
   const handleGmailRedirect = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ export default function ContactPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-      
+
       {/* HEADER */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
@@ -52,7 +52,7 @@ export default function ContactPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* 1. CONTACT INFORMATION PANEL */}
         <div className="lg:col-span-5 space-y-6">
           <div className="glass-card p-8 space-y-6 border-emerald-500/30">
@@ -92,7 +92,7 @@ export default function ContactPage() {
               </h4>
               <div className="flex items-center space-x-3">
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/dsc_nist/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 text-xs font-bold hover:text-pink-500 transition-colors"
@@ -102,7 +102,7 @@ export default function ContactPage() {
                 </a>
 
                 <a
-                  href="https://linkedin.com"
+                  href="https://in.linkedin.com/company/data-science-club-nist-university"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 text-xs font-bold hover:text-blue-500 transition-colors"
@@ -112,7 +112,7 @@ export default function ContactPage() {
                 </a>
 
                 <a
-                  href="https://github.com"
+                  href="https://github.com/DataScienceClubNIST"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 text-xs font-bold hover:text-cyan-500 transition-colors"

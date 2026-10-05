@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { useData } from '@/context/DataContext';
 import { DomainType } from '@/types';
-import { 
-  UserPlus, 
-  CheckCircle2, 
-  Send, 
-  Calendar, 
-  AlertCircle, 
-  FileText, 
+import {
+  UserPlus,
+  CheckCircle2,
+  Send,
+  Calendar,
+  AlertCircle,
+  FileText,
   Sparkles,
   Loader2
 } from 'lucide-react';
@@ -81,7 +81,7 @@ export default function RecruitmentPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-      
+
       {/* HEADER */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
@@ -101,7 +101,7 @@ export default function RecruitmentPage() {
       {/* STATE 1: RECRUITMENT OPEN */}
       {recruitmentSettings.is_open ? (
         <div className="space-y-8">
-          
+
           {/* BANNER INFO */}
           <div className="glass-card p-6 border-cyan-500/40 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-transparent flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left">
@@ -141,7 +141,7 @@ export default function RecruitmentPage() {
           {/* RECRUITMENT FORM */}
           {!submitSuccess && (
             <form onSubmit={handleSubmit} className="glass-card p-8 sm:p-10 space-y-8">
-              
+
               {errorMessage && (
                 <div className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
@@ -290,7 +290,7 @@ export default function RecruitmentPage() {
                       <label className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 block">LinkedIn Profile URL</label>
                       <input
                         type="url"
-                        placeholder="https://linkedin.com/in/username"
+                        placeholder="https://in.linkedin.com/company/data-science-club-nist-university/in/username"
                         value={linkedin}
                         onChange={(e) => setLinkedin(e.target.value)}
                         className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
@@ -384,7 +384,7 @@ export default function RecruitmentPage() {
 
           <div className="pt-4 flex items-center justify-center space-x-4">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/dsc_nist/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white text-xs font-bold hover:text-cyan-500 flex items-center space-x-2 transition-colors"
@@ -394,7 +394,7 @@ export default function RecruitmentPage() {
             </a>
 
             <a
-              href="https://linkedin.com"
+              href="https://in.linkedin.com/company/data-science-club-nist-university"
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white text-xs font-bold hover:text-cyan-500 flex items-center space-x-2 transition-colors"
@@ -404,7 +404,7 @@ export default function RecruitmentPage() {
             </a>
 
             <a
-              href="https://github.com"
+              href="https://github.com/DataScienceClubNIST"
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white text-xs font-bold hover:text-cyan-500 flex items-center space-x-2 transition-colors"

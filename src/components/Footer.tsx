@@ -48,7 +48,7 @@ export default function Footer() {
 
             <div className="flex items-center space-x-3 pt-2">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/dsc_nist/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-slate-800 transition-all duration-300"
@@ -57,7 +57,7 @@ export default function Footer() {
                 <InstagramIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://in.linkedin.com/company/data-science-club-nist-university"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-slate-800 transition-all duration-300"
@@ -66,7 +66,7 @@ export default function Footer() {
                 <LinkedinIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/DataScienceClubNIST"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-slate-800 transition-all duration-300"
@@ -142,7 +142,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-2.5">
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="mailto:datascienceclub@nist.edu" className="hover:text-white transition-colors">
+                <a href="mailto:data.science.club@nist.edu" className="hover:text-white transition-colors">
                   data.science.club@nist.edu
                 </a>
               </div>
