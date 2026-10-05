@@ -67,6 +67,7 @@ export default function PresidentPage() {
     deleteAchievement,
     addTeamMember,
     updateTeamMember,
+    updateBatchAlumniStatus,
     deleteTeamMember,
     addProject,
     updateProject,
@@ -842,31 +843,24 @@ export default function PresidentPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
               {['2025', '2024', '2023', '2022', '2021', '2020'].map((batchYear) => {
                 const batchMembers = teamMembers.filter(m => m.batch && m.batch.includes(batchYear));
-                const allIsAlumni = batchMembers.length > 0 && batchMembers.every(m => m.is_alumni);
-                const someIsAlumni = batchMembers.some(m => m.is_alumni);
-
-                const handleToggleBatchAlumni = (targetAlumni: boolean) => {
-                  batchMembers.forEach(m => {
-                    updateTeamMember(m.id, { is_alumni: targetAlumni });
-                  });
-                };
+                const isAlumniChecked = batchMembers.length > 0
+                  ? batchMembers.every(m => m.is_alumni ?? ['2020', '2021', '2022', '2023'].includes(batchYear))
+                  : ['2020', '2021', '2022', '2023'].includes(batchYear);
 
                 return (
                   <label
                     key={batchYear}
                     className={`flex items-center space-x-2 p-2.5 rounded-xl border cursor-pointer transition-all ${
-                      allIsAlumni
-                        ? 'bg-purple-600/20 border-purple-500/60 text-purple-300 font-bold'
-                        : someIsAlumni
-                        ? 'bg-purple-600/10 border-purple-500/40 text-purple-400'
+                      isAlumniChecked
+                        ? 'bg-purple-600/20 border-purple-500/60 text-purple-300 font-bold shadow-sm'
                         : 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <input
                       type="checkbox"
                       className="w-4 h-4 rounded text-purple-600 accent-purple-500 cursor-pointer"
-                      checked={allIsAlumni}
-                      onChange={(e) => handleToggleBatchAlumni(e.target.checked)}
+                      checked={isAlumniChecked}
+                      onChange={(e) => updateBatchAlumniStatus(batchYear, e.target.checked)}
                     />
                     <span className="text-xs font-mono">Batch {batchYear}</span>
                   </label>

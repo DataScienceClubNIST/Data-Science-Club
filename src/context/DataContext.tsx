@@ -68,6 +68,7 @@ interface DataContextType {
 
   addTeamMember: (member: Omit<TeamMember, 'id'>) => Promise<void>;
   updateTeamMember: (id: string, member: Partial<TeamMember>) => Promise<void>;
+  updateBatchAlumniStatus: (batchYear: string, isAlumni: boolean) => Promise<void>;
   deleteTeamMember: (id: string) => Promise<void>;
 
   addProject: (project: Omit<Project, 'id'>) => Promise<void>;
@@ -433,9 +434,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateTeamMember = async (id: string, data: Partial<TeamMember>) => {
-    const updated = teamMembers.map(t => t.id === id ? { ...t, ...data } : t);
-    setTeamMembers(updated);
-    saveStorage('dsc_team', updated);
+    setTeamMembers(prev => {
+      const updated = prev.map(t => t.id === id ? { ...t, ...data } : t);
+      saveStorage('dsc_team', updated);
+      return updated;
+    });
 
     if (isSupabaseConfigured && supabase) {
       const { error } = await supabase.from('team_members').update(data).eq('id', id);
@@ -444,10 +447,39 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateBatchAlumniStatus = async (batchYear: string, isAlumni: boolean) => {
+    setTeamMembers(prev => {
+      const updated = prev.map(m => {
+        const isMatch = m.batch === batchYear || (m.batch && m.batch.startsWith(batchYear));
+        return isMatch ? { ...m, is_alumni: isAlumni } : m;
+      });
+      saveStorage('dsc_team', updated);
+      return updated;
+    });
+
+    if (isSupabaseConfigured && supabase) {
+      const targetIds = teamMembers
+        .filter(m => m.batch === batchYear || (m.batch && m.batch.startsWith(batchYear)))
+        .map(m => m.id);
+
+      if (targetIds.length > 0) {
+        const { error } = await supabase
+          .from('team_members')
+          .update({ is_alumni: isAlumni })
+          .in('id', targetIds);
+
+        if (error) handleMutationError('team_members', error);
+        else setDbStatus(prev => ({ ...prev, isConnected: true, errorDetail: null, lastSyncTime: new Date().toLocaleTimeString() }));
+      }
+    }
+  };
+
   const deleteTeamMember = async (id: string) => {
-    const updated = teamMembers.filter(t => t.id !== id);
-    setTeamMembers(updated);
-    saveStorage('dsc_team', updated);
+    setTeamMembers(prev => {
+      const updated = prev.filter(t => t.id !== id);
+      saveStorage('dsc_team', updated);
+      return updated;
+    });
 
     if (isSupabaseConfigured && supabase) {
       const { error } = await supabase.from('team_members').delete().eq('id', id);
@@ -657,6 +689,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         deleteAchievement,
         addTeamMember,
         updateTeamMember,
+        updateBatchAlumniStatus,
         deleteTeamMember,
         addProject,
         updateProject,
