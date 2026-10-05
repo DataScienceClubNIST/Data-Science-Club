@@ -13,13 +13,12 @@ export default function TeamPage() {
 
   const allBatches = [
     'All',
-    '2026–27',
-    '2025–26',
-    '2024–25',
-    '2023–24',
-    '2022–23',
-    '2021–22',
-    '2020–21'
+    '2025',
+    '2024',
+    '2023',
+    '2022',
+    '2021',
+    '2020'
   ];
 
   const filteredMembers = selectedBatch === 'All'

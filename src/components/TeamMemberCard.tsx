@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import SafeImage from '@/components/SafeImage';
 import { TeamMember, Advisor } from '@/types';
 import { Mail, RotateCw, Sparkles, ShieldCheck } from 'lucide-react';
@@ -12,15 +12,21 @@ interface TeamMemberCardProps {
 }
 
 export default function TeamMemberCard({ member, isAdvisor = false }: TeamMemberCardProps) {
+  const [isFlipped, setIsFlipped] = useState(false);
+
   if (isAdvisor) {
     const adv = member as Advisor;
     return (
-      <div className="flip-card-container group w-full min-h-[220px]">
-        <div className="flip-card-inner">
+      <div 
+        className="flip-card-container w-full min-h-[220px] cursor-pointer"
+        onMouseEnter={() => setIsFlipped(true)}
+        onMouseLeave={() => setIsFlipped(false)}
+      >
+        <div className={`flip-card-inner ${isFlipped ? 'flipped' : ''}`}>
           
           {/* ADVISOR FRONT FACE */}
           <div className="flip-card-front glass-card p-6 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 relative overflow-hidden">
-            <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-2 border-cyan-500/40 shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-300">
+            <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-2 border-cyan-500/40 shrink-0 shadow-lg">
               <SafeImage
                 src={adv.photo}
                 fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
@@ -70,6 +76,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
                     href={adv.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-500/30"
                     aria-label="LinkedIn"
                   >
@@ -79,6 +86,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
                 {adv.email && (
                   <a
                     href={`mailto:${adv.email}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-cyan-500 hover:text-white transition-all border border-slate-700"
                     aria-label="Email"
                   >
@@ -100,19 +108,22 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
   const tm = member as TeamMember;
 
   return (
-    <div className="flip-card-container group w-full h-[270px]">
-      <div className="flip-card-inner">
+    <div 
+      className="flip-card-container w-full h-[280px] cursor-pointer"
+      onMouseEnter={() => setIsFlipped(true)}
+      onMouseLeave={() => setIsFlipped(false)}
+    >
+      <div className={`flip-card-inner ${isFlipped ? 'flipped' : ''}`}>
         
         {/* TEAM MEMBER FRONT FACE */}
         <div className="flip-card-front glass-card p-5 flex flex-col items-center justify-between text-center relative overflow-hidden">
           <div className="flex flex-col items-center">
-            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-700 group-hover:border-cyan-400 transition-colors duration-300 mb-3 shadow-md">
+            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-700 mb-3 shadow-md">
               <SafeImage
                 src={tm.photo}
                 fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
                 alt={tm.name}
                 fill
-                className="group-hover:scale-110 transition-transform duration-300"
               />
             </div>
 
@@ -135,7 +146,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
             </span>
           </div>
 
-          <div className="flex items-center space-x-1 text-[10px] font-semibold text-cyan-500 opacity-70 group-hover:opacity-100 transition-opacity pt-2 border-t border-slate-200 dark:border-slate-800/80 w-full justify-center">
+          <div className="flex items-center space-x-1 text-[10px] font-semibold text-cyan-500 opacity-80 pt-2 border-t border-slate-200 dark:border-slate-800/80 w-full justify-center">
             <RotateCw className="w-3 h-3" />
             <span>Hover to view details</span>
           </div>
@@ -181,6 +192,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
                   href={tm.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   className="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-white transition-all text-xs font-bold flex items-center space-x-1 border border-cyan-500/30 cursor-pointer"
                 >
                   <LinkedinIcon className="w-3.5 h-3.5" />
@@ -192,6 +204,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
                   href={tm.github}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 transition-all text-xs font-bold flex items-center space-x-1 border border-slate-700 cursor-pointer"
                 >
                   <GithubIcon className="w-3.5 h-3.5" />
