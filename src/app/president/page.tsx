@@ -116,7 +116,8 @@ export default function PresidentPage() {
     venue: '',
     category: 'Workshop',
     registration_link: '',
-    result: ''
+    result: '',
+    status: 'Register Now'
   });
 
   const [sankalpForm, setSankalpForm] = useState<Omit<SankalpEvent, 'id'>>({
@@ -127,7 +128,8 @@ export default function PresidentPage() {
     image: '',
     venue: '',
     registration_link: '',
-    result: ''
+    result: '',
+    status: 'Register Now'
   });
 
   const [achievementForm, setAchievementForm] = useState<Omit<Achievement, 'id'>>({
@@ -145,7 +147,9 @@ export default function PresidentPage() {
     role: 'Executive Member',
     photo: '',
     linkedin: '',
-    github: ''
+    github: '',
+    bio: '',
+    is_alumni: false
   });
 
   const [projectForm, setProjectForm] = useState<Omit<Project, 'id'>>({
@@ -227,12 +231,14 @@ export default function PresidentPage() {
   const loadSampleTeamMember = () => {
     setTeamForm({
       name: 'Aarav Sharma',
-      batch: '2026–27',
+      batch: '2025',
       domain: 'Machine Learning',
       role: 'ML Lead',
       photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80',
       linkedin: 'https://linkedin.com/in/aarav-sharma-ml',
-      github: 'https://github.com/aarav-sharma'
+      github: 'https://github.com/aarav-sharma',
+      bio: 'Machine Learning lead focused on neural networks and open-source data science tools.',
+      is_alumni: false
     });
   };
 
@@ -283,7 +289,8 @@ export default function PresidentPage() {
         venue: item.venue,
         category: item.category,
         registration_link: item.registration_link || '',
-        result: item.result || ''
+        result: item.result || '',
+        status: item.status || 'Register Now'
       });
     } else if (type === 'sankalp') {
       setSankalpForm({
@@ -294,7 +301,8 @@ export default function PresidentPage() {
         image: item.image || '',
         venue: item.venue,
         registration_link: item.registration_link || '',
-        result: item.result || ''
+        result: item.result || '',
+        status: item.status || 'Register Now'
       });
     } else if (type === 'achievements') {
       setAchievementForm({
@@ -312,7 +320,9 @@ export default function PresidentPage() {
         role: item.role || '',
         photo: item.photo,
         linkedin: item.linkedin || '',
-        github: item.github || ''
+        github: item.github || '',
+        bio: item.bio || '',
+        is_alumni: Boolean(item.is_alumni)
       });
     } else if (type === 'projects') {
       setProjectForm({
@@ -600,6 +610,7 @@ export default function PresidentPage() {
                   <th className="p-4">Title</th>
                   <th className="p-4">Year</th>
                   <th className="p-4">Category</th>
+                  <th className="p-4">Status</th>
                   <th className="p-4">Venue</th>
                   <th className="p-4">Date</th>
                   <th className="p-4 text-right">Actions</th>
@@ -611,6 +622,17 @@ export default function PresidentPage() {
                     <td className="p-4 font-bold text-slate-900 dark:text-white">{e.title}</td>
                     <td className="p-4 font-mono">{e.year}</td>
                     <td className="p-4"><span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold">{e.category}</span></td>
+                    <td className="p-4">
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                        e.status === 'Register Now'
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                          : e.status === 'Coming soon...'
+                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                          : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
+                      }`}>
+                        {e.status || 'Register Now'}
+                      </span>
+                    </td>
                     <td className="p-4 text-slate-500">{e.venue}</td>
                     <td className="p-4 text-slate-500">{e.date}</td>
                     <td className="p-4 text-right space-x-1">
@@ -648,7 +670,7 @@ export default function PresidentPage() {
               <button
                 onClick={() => {
                   setSankalpForm({
-                    title: '', year: 2026, date: '', description: '', image: '', venue: '', registration_link: '', result: ''
+                    title: '', year: 2026, date: '', description: '', image: '', venue: '', registration_link: '', result: '', status: 'Register Now'
                   });
                   setShowAddModal(true);
                 }}
@@ -666,6 +688,7 @@ export default function PresidentPage() {
                 <tr>
                   <th className="p-4">Event Title</th>
                   <th className="p-4">Fest Year</th>
+                  <th className="p-4">Status</th>
                   <th className="p-4">Venue</th>
                   <th className="p-4">Date</th>
                   <th className="p-4 text-right">Actions</th>
@@ -676,6 +699,17 @@ export default function PresidentPage() {
                   <tr key={e.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                     <td className="p-4 font-bold text-slate-900 dark:text-white">{e.title}</td>
                     <td className="p-4 font-mono font-bold text-purple-400">Sankalp {e.year}</td>
+                    <td className="p-4">
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                        e.status === 'Register Now'
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                          : e.status === 'Coming soon...'
+                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                          : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
+                      }`}>
+                        {e.status || 'Register Now'}
+                      </span>
+                    </td>
                     <td className="p-4 text-slate-500">{e.venue}</td>
                     <td className="p-4 text-slate-500">{e.date}</td>
                     <td className="p-4 text-right space-x-1">
@@ -761,7 +795,12 @@ export default function PresidentPage() {
       {activeTab === 'team' && (
         <div className="space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Manage Team Members & Batches</h2>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Manage Team Members & Alumni</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Categorize members as Alumni or Current Members by batch tickboxes or individual member settings.
+              </p>
+            </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => {
@@ -776,7 +815,7 @@ export default function PresidentPage() {
               <button
                 onClick={() => {
                   setTeamForm({
-                    name: '', batch: '2026–27', domain: 'Data Science', role: 'Executive Member', photo: '', linkedin: '', github: ''
+                    name: '', batch: '2025', domain: 'Data Science', role: 'Executive Member', photo: '', linkedin: '', github: '', bio: '', is_alumni: false
                   });
                   setShowAddModal(true);
                 }}
@@ -788,6 +827,54 @@ export default function PresidentPage() {
             </div>
           </div>
 
+          {/* ALUMNI BATCHES CONFIGURATION CARD */}
+          <div className="glass-card p-5 space-y-3 bg-purple-900/10 border-purple-500/30">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-purple-900 dark:text-purple-300 flex items-center space-x-1.5">
+                <Users className="w-4 h-4 text-purple-500" />
+                <span>Alumni Batches Configuration (Tickboxes to select Alumni batches)</span>
+              </h3>
+              <span className="text-[11px] text-purple-600 dark:text-purple-400 font-semibold">
+                Checked = Alumni | Unchecked = Current Members
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+              {['2025', '2024', '2023', '2022', '2021', '2020'].map((batchYear) => {
+                const batchMembers = teamMembers.filter(m => m.batch && m.batch.includes(batchYear));
+                const allIsAlumni = batchMembers.length > 0 && batchMembers.every(m => m.is_alumni);
+                const someIsAlumni = batchMembers.some(m => m.is_alumni);
+
+                const handleToggleBatchAlumni = (targetAlumni: boolean) => {
+                  batchMembers.forEach(m => {
+                    updateTeamMember(m.id, { is_alumni: targetAlumni });
+                  });
+                };
+
+                return (
+                  <label
+                    key={batchYear}
+                    className={`flex items-center space-x-2 p-2.5 rounded-xl border cursor-pointer transition-all ${
+                      allIsAlumni
+                        ? 'bg-purple-600/20 border-purple-500/60 text-purple-300 font-bold'
+                        : someIsAlumni
+                        ? 'bg-purple-600/10 border-purple-500/40 text-purple-400'
+                        : 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded text-purple-600 accent-purple-500 cursor-pointer"
+                      checked={allIsAlumni}
+                      onChange={(e) => handleToggleBatchAlumni(e.target.checked)}
+                    />
+                    <span className="text-xs font-mono">Batch {batchYear}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="glass-card overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-800">
@@ -796,26 +883,43 @@ export default function PresidentPage() {
                   <th className="p-4">Batch</th>
                   <th className="p-4">Domain</th>
                   <th className="p-4">Role</th>
+                  <th className="p-4">Member Status</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {teamMembers.map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                    <td className="p-4 font-bold text-slate-900 dark:text-white">{m.name}</td>
-                    <td className="p-4 font-mono font-bold text-cyan-500">{m.batch}</td>
-                    <td className="p-4"><span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-semibold">{m.domain}</span></td>
-                    <td className="p-4 text-slate-500">{m.role || 'Member'}</td>
-                    <td className="p-4 text-right space-x-1">
-                      <button onClick={() => handleStartEdit('team', m)} className="p-1.5 text-cyan-500 hover:bg-cyan-500/10 rounded-lg cursor-pointer" title="Edit Member">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => deleteTeamMember(m.id)} className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer" title="Delete Member">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {teamMembers.map((m) => {
+                  const isAlum = m.is_alumni ?? ['2020', '2021', '2022', '2023'].some(b => m.batch && m.batch.includes(b));
+                  return (
+                    <tr key={m.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                      <td className="p-4 font-bold text-slate-900 dark:text-white">{m.name}</td>
+                      <td className="p-4 font-mono font-bold text-cyan-500">{m.batch}</td>
+                      <td className="p-4"><span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-semibold">{m.domain}</span></td>
+                      <td className="p-4 text-slate-500">{m.role || 'Member'}</td>
+                      <td className="p-4">
+                        <button
+                          onClick={() => updateTeamMember(m.id, { is_alumni: !isAlum })}
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold cursor-pointer border transition-all ${
+                            isAlum
+                              ? 'bg-purple-500/20 text-purple-400 border-purple-500/40 hover:bg-purple-500/30'
+                              : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500/30'
+                          }`}
+                          title="Click to toggle Alumni vs Current Member"
+                        >
+                          {isAlum ? 'Alumni' : 'Current Member'}
+                        </button>
+                      </td>
+                      <td className="p-4 text-right space-x-1">
+                        <button onClick={() => handleStartEdit('team', m)} className="p-1.5 text-cyan-500 hover:bg-cyan-500/10 rounded-lg cursor-pointer" title="Edit Member">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => deleteTeamMember(m.id)} className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer" title="Delete Member">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -1189,6 +1293,14 @@ export default function PresidentPage() {
                   </div>
                 </div>
                 <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Event Status *</label>
+                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-semibold" value={eventForm.status || 'Register Now'} onChange={e => setEventForm({...eventForm, status: e.target.value as any})}>
+                    <option value="Coming soon...">Coming soon...</option>
+                    <option value="Register Now">Register Now</option>
+                    <option value="Registration Closed">Registration Closed</option>
+                  </select>
+                </div>
+                <div>
                   <label className="text-[11px] font-bold text-slate-400 block mb-1">Date String *</label>
                   <input required placeholder="e.g. April 20, 2026" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.date} onChange={e => setEventForm({...eventForm, date: e.target.value})} />
                 </div>
@@ -1226,7 +1338,14 @@ export default function PresidentPage() {
                 setEditingItem(null);
               }} className="space-y-3 text-xs">
                 <input required placeholder="Activity Title" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.title} onChange={e => setSankalpForm({...sankalpForm, title: e.target.value})} />
-                <input type="number" required placeholder="Fest Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.year} onChange={e => setSankalpForm({...sankalpForm, year: Number(e.target.value)})} />
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="number" required placeholder="Fest Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.year} onChange={e => setSankalpForm({...sankalpForm, year: Number(e.target.value)})} />
+                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-semibold" value={sankalpForm.status || 'Register Now'} onChange={e => setSankalpForm({...sankalpForm, status: e.target.value as any})}>
+                    <option value="Coming soon...">Coming soon...</option>
+                    <option value="Register Now">Register Now</option>
+                    <option value="Registration Closed">Registration Closed</option>
+                  </select>
+                </div>
                 <input required placeholder="Date String" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.date} onChange={e => setSankalpForm({...sankalpForm, date: e.target.value})} />
                 <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.venue} onChange={e => setSankalpForm({...sankalpForm, venue: e.target.value})} />
                 <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.description} onChange={e => setSankalpForm({...sankalpForm, description: e.target.value})} />
@@ -1276,21 +1395,17 @@ export default function PresidentPage() {
                 setEditingItem(null);
               }} className="space-y-3 text-xs">
                 <input required placeholder="Member Full Name" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.name} onChange={e => setTeamForm({...teamForm, name: e.target.value})} />
-                <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.batch} onChange={e => setTeamForm({...teamForm, batch: e.target.value})}>
-                  <option value="2025">2025</option>
-                  <option value="2024">2024</option>
-                  <option value="2023">2023</option>
-                  <option value="2022">2022</option>
-                  <option value="2021">2021</option>
-                  <option value="2020">2020</option>
-                  <option value="2026–27">2026–27</option>
-                  <option value="2025–26">2025–26</option>
-                  <option value="2024–25">2024–25</option>
-                  <option value="2023–24">2023–24</option>
-                  <option value="2022–23">2022–23</option>
-                  <option value="2021–22">2021–22</option>
-                  <option value="2020–21">2020–21</option>
-                </select>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Batch Year</label>
+                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.batch} onChange={e => setTeamForm({...teamForm, batch: e.target.value})}>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                </div>
                 <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.domain} onChange={e => setTeamForm({...teamForm, domain: e.target.value as DomainType})}>
                   <option value="Data Science">Data Science</option>
                   <option value="Machine Learning">Machine Learning</option>
@@ -1305,6 +1420,22 @@ export default function PresidentPage() {
                   value={teamForm.photo}
                   onChange={url => setTeamForm({...teamForm, photo: url})}
                 />
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Short Bio (Shown on Card Flip)</label>
+                  <textarea rows={3} placeholder="Short bio about member..." className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.bio || ''} onChange={e => setTeamForm({...teamForm, bio: e.target.value})} />
+                </div>
+                <div className="flex items-center space-x-2 pt-1 pb-1">
+                  <input
+                    type="checkbox"
+                    id="edit_is_alumni"
+                    className="w-4 h-4 rounded text-cyan-600 accent-cyan-500 cursor-pointer"
+                    checked={teamForm.is_alumni || false}
+                    onChange={e => setTeamForm({...teamForm, is_alumni: e.target.checked})}
+                  />
+                  <label htmlFor="edit_is_alumni" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    Mark as Alumni Member
+                  </label>
+                </div>
                 <input placeholder="LinkedIn URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.linkedin} onChange={e => setTeamForm({...teamForm, linkedin: e.target.value})} />
                 <input placeholder="GitHub URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.github} onChange={e => setTeamForm({...teamForm, github: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Update Member Card</button>
@@ -1452,6 +1583,14 @@ export default function PresidentPage() {
                     <option value="Seminar">Seminar</option>
                   </select>
                 </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Event Status *</label>
+                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-semibold" value={eventForm.status || 'Register Now'} onChange={e => setEventForm({...eventForm, status: e.target.value as any})}>
+                    <option value="Coming soon...">Coming soon...</option>
+                    <option value="Register Now">Register Now</option>
+                    <option value="Registration Closed">Registration Closed</option>
+                  </select>
+                </div>
                 <input required placeholder="Date string (e.g. March 15, 2026)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.date} onChange={e => setEventForm({...eventForm, date: e.target.value})} />
                 <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.venue} onChange={e => setEventForm({...eventForm, venue: e.target.value})} />
                 <textarea required placeholder="Event Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.description} onChange={e => setEventForm({...eventForm, description: e.target.value})} />
@@ -1474,7 +1613,14 @@ export default function PresidentPage() {
                 setShowAddModal(false);
               }} className="space-y-3 text-xs">
                 <input required placeholder="Activity Title" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.title} onChange={e => setSankalpForm({...sankalpForm, title: e.target.value})} />
-                <input type="number" required placeholder="Fest Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.year} onChange={e => setSankalpForm({...sankalpForm, year: Number(e.target.value)})} />
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="number" required placeholder="Fest Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.year} onChange={e => setSankalpForm({...sankalpForm, year: Number(e.target.value)})} />
+                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-semibold" value={sankalpForm.status || 'Register Now'} onChange={e => setSankalpForm({...sankalpForm, status: e.target.value as any})}>
+                    <option value="Coming soon...">Coming soon...</option>
+                    <option value="Register Now">Register Now</option>
+                    <option value="Registration Closed">Registration Closed</option>
+                  </select>
+                </div>
                 <input required placeholder="Date String" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.date} onChange={e => setSankalpForm({...sankalpForm, date: e.target.value})} />
                 <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.venue} onChange={e => setSankalpForm({...sankalpForm, venue: e.target.value})} />
                 <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.description} onChange={e => setSankalpForm({...sankalpForm, description: e.target.value})} />
@@ -1522,21 +1668,17 @@ export default function PresidentPage() {
                 setShowAddModal(false);
               }} className="space-y-3 text-xs">
                 <input required placeholder="Member Full Name" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.name} onChange={e => setTeamForm({...teamForm, name: e.target.value})} />
-                <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.batch} onChange={e => setTeamForm({...teamForm, batch: e.target.value})}>
-                  <option value="2025">2025</option>
-                  <option value="2024">2024</option>
-                  <option value="2023">2023</option>
-                  <option value="2022">2022</option>
-                  <option value="2021">2021</option>
-                  <option value="2020">2020</option>
-                  <option value="2026–27">2026–27</option>
-                  <option value="2025–26">2025–26</option>
-                  <option value="2024–25">2024–25</option>
-                  <option value="2023–24">2023–24</option>
-                  <option value="2022–23">2022–23</option>
-                  <option value="2021–22">2021–22</option>
-                  <option value="2020–21">2020–21</option>
-                </select>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Batch Year</label>
+                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.batch} onChange={e => setTeamForm({...teamForm, batch: e.target.value})}>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                </div>
                 <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.domain} onChange={e => setTeamForm({...teamForm, domain: e.target.value as DomainType})}>
                   <option value="Data Science">Data Science</option>
                   <option value="Machine Learning">Machine Learning</option>
@@ -1551,6 +1693,22 @@ export default function PresidentPage() {
                   value={teamForm.photo}
                   onChange={url => setTeamForm({...teamForm, photo: url})}
                 />
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Short Bio (Shown on Card Flip)</label>
+                  <textarea rows={3} placeholder="Short bio about member..." className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.bio || ''} onChange={e => setTeamForm({...teamForm, bio: e.target.value})} />
+                </div>
+                <div className="flex items-center space-x-2 pt-1 pb-1">
+                  <input
+                    type="checkbox"
+                    id="add_is_alumni"
+                    className="w-4 h-4 rounded text-cyan-600 accent-cyan-500 cursor-pointer"
+                    checked={teamForm.is_alumni || false}
+                    onChange={e => setTeamForm({...teamForm, is_alumni: e.target.checked})}
+                  />
+                  <label htmlFor="add_is_alumni" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    Mark as Alumni Member
+                  </label>
+                </div>
                 <input placeholder="LinkedIn URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.linkedin} onChange={e => setTeamForm({...teamForm, linkedin: e.target.value})} />
                 <input placeholder="GitHub URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.github} onChange={e => setTeamForm({...teamForm, github: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Publish Team Member</button>

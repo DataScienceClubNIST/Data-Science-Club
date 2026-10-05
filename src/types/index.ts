@@ -5,6 +5,8 @@ export type DomainType =
   | 'OpenCV'
   | 'Web Development';
 
+export type EventStatus = 'Coming soon...' | 'Register Now' | 'Registration Closed';
+
 export interface ClubEvent {
   id: string;
   title: string;
@@ -16,6 +18,7 @@ export interface ClubEvent {
   category: 'Workshop' | 'Competition' | 'Hackathon' | 'Tech Talk' | 'Seminar';
   registration_link?: string;
   result?: string;
+  status?: EventStatus;
 }
 
 export interface SankalpEvent {
@@ -28,6 +31,7 @@ export interface SankalpEvent {
   venue: string;
   registration_link?: string;
   result?: string;
+  status?: EventStatus;
 }
 
 export interface Achievement {
@@ -54,10 +58,12 @@ export interface Advisor {
 export interface TeamMember {
   id: string;
   name: string;
-  batch: string; // e.g., '2026–27', '2025–26', '2024–25', '2023–24', '2022–23', '2021–22', '2020–21'
+  batch: string; // e.g., '2025', '2024', '2023', '2022', '2021', '2020'
   domain: DomainType;
   role?: string;
   photo: string;
+  bio?: string;
+  is_alumni?: boolean;
   linkedin?: string;
   github?: string;
 }

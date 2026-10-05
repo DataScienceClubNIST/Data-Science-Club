@@ -43,6 +43,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     batch: '2025',
     domain: 'Data Science',
     role: 'Club President',
+    bio: 'Passionate about machine learning pipelines, big data architectures, and leading student innovation at NIST.',
+    is_alumni: false,
     photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/rahul-sahoo',
     github: 'https://github.com/rahulsahoo'
@@ -53,6 +55,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     batch: '2025',
     domain: 'Machine Learning',
     role: 'Tech Head',
+    bio: 'Specializes in computer vision applications, model optimization, and building AI tools for open source projects.',
+    is_alumni: false,
     photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/priyasharma-ml',
     github: 'https://github.com/priyasharma'
@@ -63,6 +67,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     batch: '2025',
     domain: 'Deep Learning',
     role: 'Junior Secretary',
+    bio: 'Focuses on deep learning architectures, PyTorch model training, and coordinating technical workshops.',
+    is_alumni: false,
     photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/amanverma-dl',
     github: 'https://github.com/amanverma'
@@ -73,6 +79,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     batch: '2025',
     domain: 'OpenCV',
     role: 'Vision Lead',
+    bio: 'OpenCV developer working on real-time autonomous rover vision and object tracking systems.',
+    is_alumni: false,
     photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/snehapattnaik',
     github: 'https://github.com/snehapattnaik'
@@ -83,18 +91,22 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     batch: '2025',
     domain: 'Web Development',
     role: 'Fullstack Lead',
+    bio: 'Building reactive Next.js web applications, UI design systems, and cloud backend integrations.',
+    is_alumni: false,
     photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/rohandas-web',
     github: 'https://github.com/rohandas'
   },
   
-  // 2025 Batch (Ex-Leadership)
+  // Alumni Batches
   {
     id: 'tm-2025-1',
     name: 'Subhashree Behera',
     batch: '2025',
     domain: 'Data Science',
     role: 'Ex-President',
+    bio: 'Data Science Alumna working as an AI Data Analyst; led NIST DSC during 2024–25 sessions.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/subhashree-b',
     github: 'https://github.com/subhashree'
@@ -105,6 +117,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     batch: '2025',
     domain: 'Machine Learning',
     role: 'Ex-Tech Head',
+    bio: 'Machine Learning Engineer alumnus with focus on edge ML deployments.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/adityamishra-ml',
     github: 'https://github.com/adityamishra'
@@ -114,18 +128,22 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     name: 'Anusha Mahapatra',
     batch: '2025',
     domain: 'Deep Learning',
+    bio: 'Deep Learning Alumna specialized in medical image analysis and neural networks.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/anusha-m',
     github: 'https://github.com/anusham'
   },
 
-  // 2024 Batch
+  // 2024 Alumni Batch
   {
     id: 'tm-2024-1',
     name: 'Debasish Tripathy',
     batch: '2024',
     domain: 'OpenCV',
     role: 'Vision Coordinator',
+    bio: 'OpenCV Alumnus who led image processing projects and robotics competitions.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/debasisht',
     github: 'https://github.com/debasisht'
@@ -135,51 +153,61 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     name: 'Swati Sucharita',
     batch: '2024',
     domain: 'Web Development',
+    bio: 'Software Engineer Alumna working on scalable frontend web architectures.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/swati-s',
     github: 'https://github.com/swatis'
   },
 
-  // 2023 Batch
+  // 2023 Alumni Batch
   {
     id: 'tm-2023-1',
     name: 'Abhishek Choudhury',
     batch: '2023',
     domain: 'Data Science',
+    bio: 'Data Scientist Alumnus skilled in predictive analytics and business intelligence.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/abhishekc',
     github: 'https://github.com/abhishekc'
   },
 
-  // 2022 Batch
+  // 2022 Alumni Batch
   {
     id: 'tm-2022-1',
     name: 'Manish Mohanty',
     batch: '2022',
     domain: 'Machine Learning',
+    bio: 'Senior Software Engineer Alumnus building NLP recommendation engines.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/manishm',
     github: 'https://github.com/manishm'
   },
 
-  // 2021 Batch
+  // 2021 Alumni Batch
   {
     id: 'tm-2021-1',
     name: 'Archana Senapati',
     batch: '2021',
     domain: 'Deep Learning',
+    bio: 'AI Researcher Alumna working on computer vision and reinforcement learning.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/archanas',
     github: 'https://github.com/archanas'
   },
 
-  // 2020 Batch (Founding Batch)
+  // 2020 Alumni Batch (Founding Batch)
   {
     id: 'tm-2020-1',
     name: 'Satyajit Ray',
     batch: '2020',
     domain: 'Data Science',
     role: 'Founding President',
+    bio: 'Founding President of NIST Data Science Club; currently Lead Data Engineer.',
+    is_alumni: true,
     photo: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=400&q=80',
     linkedin: 'https://linkedin.com/in/satyajitray-ds',
     github: 'https://github.com/satyajitray'

@@ -27,13 +27,26 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
           
-          <div className="absolute top-3 left-3 flex items-center space-x-2">
+          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center">
             <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-cyan-500/90 text-white shadow-md">
               {event.year}
             </span>
             <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-slate-200 border border-slate-700/60">
               {category}
             </span>
+            {event.status && (
+              <span
+                className={`px-2.5 py-1 rounded-full text-xs font-bold border backdrop-blur-md shadow-md ${
+                  event.status === 'Register Now'
+                    ? 'bg-emerald-500/90 text-white border-emerald-400/50'
+                    : event.status === 'Coming soon...'
+                    ? 'bg-amber-500/90 text-slate-950 border-amber-400/50 font-extrabold'
+                    : 'bg-rose-500/90 text-white border-rose-400/50'
+                }`}
+              >
+                {event.status}
+              </span>
+            )}
           </div>
         </div>
 
@@ -67,16 +80,32 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
                 View Details
               </button>
 
-              {event.registration_link && (
-                <a
-                  href={event.registration_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2 px-3 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors flex items-center justify-center space-x-1"
+              {event.status === 'Registration Closed' ? (
+                <button
+                  disabled
+                  className="py-2 px-3 rounded-lg text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-200 dark:bg-slate-800 cursor-not-allowed"
                 >
-                  <span>Register</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                  Closed
+                </button>
+              ) : event.status === 'Coming soon...' ? (
+                <button
+                  disabled
+                  className="py-2 px-3 rounded-lg text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 cursor-not-allowed"
+                >
+                  Soon
+                </button>
+              ) : (
+                event.registration_link && (
+                  <a
+                    href={event.registration_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-3 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors flex items-center justify-center space-x-1"
+                  >
+                    <span>Register</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )
               )}
             </div>
           </div>

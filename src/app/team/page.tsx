@@ -10,6 +10,7 @@ import { Users, GraduationCap, Award, ChevronDown } from 'lucide-react';
 export default function TeamPage() {
   const { advisors, teamMembers } = useData();
   const [selectedBatch, setSelectedBatch] = useState<string>('All');
+  const [memberType, setMemberType] = useState<'all' | 'current' | 'alumni'>('all');
 
   const allBatches = [
     'All',
@@ -21,21 +22,40 @@ export default function TeamPage() {
     '2020'
   ];
 
-  // Helper to match batch strings flexibly (e.g. '2025' matches '2025', '2025–26', '2025-26')
+  // Helper to check if a member is alumni
+  const isMemberAlumni = (m: (typeof teamMembers)[0]) => {
+    if (typeof m.is_alumni === 'boolean') return m.is_alumni;
+    // Default fallback: batches 2020..2023 are alumni
+    return ['2020', '2021', '2022', '2023'].some(b => m.batch && m.batch.includes(b));
+  };
+
+  // Helper to match batch strings flexibly
   const isBatchMatch = (memberBatch: string, targetBatch: string) => {
     if (targetBatch === 'All') return true;
     if (!memberBatch) return false;
     return memberBatch === targetBatch || memberBatch.startsWith(targetBatch);
   };
 
-  const filteredMembers = selectedBatch === 'All'
-    ? teamMembers
-    : teamMembers.filter(m => isBatchMatch(m.batch, selectedBatch));
+  const filteredMembers = teamMembers.filter(m => {
+    const matchesBatch = isBatchMatch(m.batch, selectedBatch);
+    const isAlum = isMemberAlumni(m);
+    if (!matchesBatch) return false;
+    if (memberType === 'current') return !isAlum;
+    if (memberType === 'alumni') return isAlum;
+    return true;
+  });
 
   // Group team members by batch for structured section layout when 'All' is selected
   const groupedBatches = allBatches.filter(b => b !== 'All').map(batchName => ({
     batch: batchName,
-    members: teamMembers.filter(m => isBatchMatch(m.batch, batchName))
+    members: teamMembers.filter(m => {
+      const matchesBatch = isBatchMatch(m.batch, batchName);
+      const isAlum = isMemberAlumni(m);
+      if (!matchesBatch) return false;
+      if (memberType === 'current') return !isAlum;
+      if (memberType === 'alumni') return isAlum;
+      return true;
+    })
   })).filter(g => g.members.length > 0);
 
   return (
@@ -73,26 +93,65 @@ export default function TeamPage() {
       {/* 2. BATCH MEMBERS SECTION */}
       <section className="space-y-8">
 
-        {/* BATCH SELECTOR STRIP */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-              Student Batches (2020 → Present)
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Filter by core batch year or view complete club team history.
-            </p>
+        {/* CONTROLS STRIP: MEMBER TYPE TABS & BATCH SELECTOR */}
+        <div className="flex flex-col space-y-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Student Members & Alumni
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Switch between current active members, alumni network, or filter by batch year.
+              </p>
+            </div>
+
+            {/* MEMBER TYPE FILTER (Current, Alumni, All) */}
+            <div className="flex items-center bg-slate-100 dark:bg-slate-800/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
+              <button
+                onClick={() => setMemberType('all')}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  memberType === 'all'
+                    ? 'bg-cyan-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-cyan-500'
+                }`}
+              >
+                All Members
+              </button>
+              <button
+                onClick={() => setMemberType('current')}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  memberType === 'current'
+                    ? 'bg-cyan-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-cyan-500'
+                }`}
+              >
+                Current Members
+              </button>
+              <button
+                onClick={() => setMemberType('alumni')}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  memberType === 'alumni'
+                    ? 'bg-cyan-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-cyan-500'
+                }`}
+              >
+                Alumni
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
+          {/* BATCH SELECTOR STRIP */}
+          <div className="flex items-center space-x-2 overflow-x-auto pt-2 pb-1">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0 mr-1">Batch Year:</span>
             {allBatches.map((batch) => (
               <button
                 key={batch}
                 onClick={() => setSelectedBatch(batch)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${selectedBatch === batch
-                  ? 'bg-cyan-600 text-white shadow-md'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                  selectedBatch === batch
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
               >
                 {batch === 'All' ? 'All Batches' : batch}
               </button>

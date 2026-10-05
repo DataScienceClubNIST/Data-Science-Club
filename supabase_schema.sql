@@ -19,8 +19,10 @@ CREATE TABLE IF NOT EXISTS public.events (
   category TEXT NOT NULL CHECK (category IN ('Workshop', 'Competition', 'Hackathon', 'Tech Talk', 'Seminar')),
   registration_link TEXT,
   result TEXT,
+  status TEXT DEFAULT 'Register Now' CHECK (status IN ('Coming soon...', 'Register Now', 'Registration Closed')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Register Now';
 
 -- 2. SANKALP EVENTS TABLE
 CREATE TABLE IF NOT EXISTS public.sankalp_events (
@@ -33,8 +35,10 @@ CREATE TABLE IF NOT EXISTS public.sankalp_events (
   venue TEXT NOT NULL,
   registration_link TEXT,
   result TEXT,
+  status TEXT DEFAULT 'Register Now' CHECK (status IN ('Coming soon...', 'Register Now', 'Registration Closed')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.sankalp_events ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Register Now';
 
 -- 3. ACHIEVEMENTS TABLE
 CREATE TABLE IF NOT EXISTS public.achievements (
@@ -69,10 +73,14 @@ CREATE TABLE IF NOT EXISTS public.team_members (
   domain TEXT NOT NULL CHECK (domain IN ('Data Science', 'Machine Learning', 'Deep Learning', 'OpenCV', 'Web Development')),
   role TEXT,
   photo TEXT NOT NULL,
+  bio TEXT,
+  is_alumni BOOLEAN DEFAULT FALSE,
   linkedin TEXT,
   github TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.team_members ADD COLUMN IF NOT EXISTS bio TEXT;
+ALTER TABLE public.team_members ADD COLUMN IF NOT EXISTS is_alumni BOOLEAN DEFAULT FALSE;
 
 -- 6. PROJECTS TABLE
 CREATE TABLE IF NOT EXISTS public.projects (

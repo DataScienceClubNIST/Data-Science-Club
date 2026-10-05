@@ -169,19 +169,10 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
               <p className="text-xs font-bold text-cyan-400">{tm.role || 'Club Executive'}</p>
             </div>
 
-            <div className="w-full bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-left space-y-1">
-              <div className="flex justify-between items-center text-[11px]">
-                <span className="text-slate-400 font-medium">Domain:</span>
-                <span className="text-purple-300 font-bold">{tm.domain}</span>
-              </div>
-              <div className="flex justify-between items-center text-[11px]">
-                <span className="text-slate-400 font-medium">Academic Year:</span>
-                <span className="text-cyan-300 font-mono font-bold">{tm.batch}</span>
-              </div>
-              <div className="flex justify-between items-center text-[11px]">
-                <span className="text-slate-400 font-medium">Affiliation:</span>
-                <span className="text-slate-200 font-semibold">DSC NIST</span>
-              </div>
+            <div className="w-full bg-slate-800/80 p-3 rounded-xl border border-slate-700/60 text-left">
+              <p className="text-xs text-slate-200 leading-relaxed line-clamp-4">
+                {tm.bio || `Passionate member of NIST Data Science Club dedicated to learning, collaboration, and technology innovation.`}
+              </p>
             </div>
           </div>
 
