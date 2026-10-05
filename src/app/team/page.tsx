@@ -8,7 +8,7 @@ import { useData } from '@/context/DataContext';
 import { Users, GraduationCap, Award, ChevronDown } from 'lucide-react';
 
 export default function TeamPage() {
-  const { advisors, teamMembers } = useData();
+  const { advisors, teamMembers, alumniBatches } = useData();
   const [selectedBatch, setSelectedBatch] = useState<string>('All');
   const [memberType, setMemberType] = useState<'all' | 'current' | 'alumni'>('all');
 
@@ -25,8 +25,7 @@ export default function TeamPage() {
   // Helper to check if a member is alumni
   const isMemberAlumni = (m: (typeof teamMembers)[0]) => {
     if (typeof m.is_alumni === 'boolean') return m.is_alumni;
-    // Default fallback: batches 2020..2023 are alumni
-    return ['2020', '2021', '2022', '2023'].some(b => m.batch && m.batch.includes(b));
+    return alumniBatches.some(b => m.batch && (m.batch === b || m.batch.startsWith(b)));
   };
 
   // Helper to match batch strings flexibly

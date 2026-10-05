@@ -69,6 +69,8 @@ interface DataContextType {
   addTeamMember: (member: Omit<TeamMember, 'id'>) => Promise<void>;
   updateTeamMember: (id: string, member: Partial<TeamMember>) => Promise<void>;
   updateBatchAlumniStatus: (batchYear: string, isAlumni: boolean) => Promise<void>;
+  alumniBatches: string[];
+  toggleAlumniBatch: (batchYear: string, isAlumni: boolean) => Promise<void>;
   deleteTeamMember: (id: string) => Promise<void>;
 
   addProject: (project: Omit<Project, 'id'>) => Promise<void>;
@@ -102,6 +104,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [recruitmentSettings, setRecruitmentSettings] = useState<RecruitmentSettings>(INITIAL_RECRUITMENT_SETTINGS);
   const [applications, setApplications] = useState<RecruitmentApplication[]>([]);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [alumniBatches, setAlumniBatches] = useState<string[]>(['2020', '2021', '2022', '2023']);
 
   const [dbStatus, setDbStatus] = useState<DbStatus>({
     isConfigured: isSupabaseConfigured,
@@ -184,6 +187,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const storedRecSettings = localStorage.getItem('dsc_rec_settings');
       const storedApps = localStorage.getItem('dsc_applications');
       const storedAdmin = localStorage.getItem('dsc_admin_session');
+      const storedAlumniBatches = localStorage.getItem('dsc_alumni_batches');
 
       // 1. Initial Local / Default Fallback state
       setEvents(storedEvents ? JSON.parse(storedEvents) : INITIAL_EVENTS);
@@ -195,6 +199,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setGallery(storedGallery ? JSON.parse(storedGallery) : INITIAL_GALLERY);
       setRecruitmentSettings(storedRecSettings ? JSON.parse(storedRecSettings) : INITIAL_RECRUITMENT_SETTINGS);
       setApplications(storedApps ? JSON.parse(storedApps) : INITIAL_APPLICATIONS);
+      if (storedAlumniBatches) {
+        setAlumniBatches(JSON.parse(storedAlumniBatches));
+      }
 
       if (storedAdmin) {
         setAdminUser(JSON.parse(storedAdmin));
@@ -447,7 +454,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateBatchAlumniStatus = async (batchYear: string, isAlumni: boolean) => {
+  const toggleAlumniBatch = async (batchYear: string, isAlumni: boolean) => {
+    setAlumniBatches(prev => {
+      const updated = isAlumni
+        ? (prev.includes(batchYear) ? prev : [...prev, batchYear])
+        : prev.filter(b => b !== batchYear);
+      saveStorage('dsc_alumni_batches', updated);
+      return updated;
+    });
+
     setTeamMembers(prev => {
       const updated = prev.map(m => {
         const isMatch = m.batch === batchYear || (m.batch && m.batch.startsWith(batchYear));
@@ -473,6 +488,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       }
     }
   };
+
+  const updateBatchAlumniStatus = toggleAlumniBatch;
 
   const deleteTeamMember = async (id: string) => {
     setTeamMembers(prev => {
@@ -690,6 +707,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         addTeamMember,
         updateTeamMember,
         updateBatchAlumniStatus,
+        alumniBatches,
+        toggleAlumniBatch,
         deleteTeamMember,
         addProject,
         updateProject,

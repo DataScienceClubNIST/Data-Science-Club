@@ -68,6 +68,8 @@ export default function PresidentPage() {
     addTeamMember,
     updateTeamMember,
     updateBatchAlumniStatus,
+    alumniBatches,
+    toggleAlumniBatch,
     deleteTeamMember,
     addProject,
     updateProject,
@@ -842,10 +844,7 @@ export default function PresidentPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
               {['2025', '2024', '2023', '2022', '2021', '2020'].map((batchYear) => {
-                const batchMembers = teamMembers.filter(m => m.batch && m.batch.includes(batchYear));
-                const isAlumniChecked = batchMembers.length > 0
-                  ? batchMembers.every(m => m.is_alumni ?? ['2020', '2021', '2022', '2023'].includes(batchYear))
-                  : ['2020', '2021', '2022', '2023'].includes(batchYear);
+                const isAlumniChecked = alumniBatches.includes(batchYear);
 
                 return (
                   <label
@@ -860,7 +859,7 @@ export default function PresidentPage() {
                       type="checkbox"
                       className="w-4 h-4 rounded text-purple-600 accent-purple-500 cursor-pointer"
                       checked={isAlumniChecked}
-                      onChange={(e) => updateBatchAlumniStatus(batchYear, e.target.checked)}
+                      onChange={(e) => toggleAlumniBatch(batchYear, e.target.checked)}
                     />
                     <span className="text-xs font-mono">Batch {batchYear}</span>
                   </label>
