@@ -21,14 +21,21 @@ export default function TeamPage() {
     '2020'
   ];
 
+  // Helper to match batch strings flexibly (e.g. '2025' matches '2025', '2025–26', '2025-26')
+  const isBatchMatch = (memberBatch: string, targetBatch: string) => {
+    if (targetBatch === 'All') return true;
+    if (!memberBatch) return false;
+    return memberBatch === targetBatch || memberBatch.startsWith(targetBatch);
+  };
+
   const filteredMembers = selectedBatch === 'All'
     ? teamMembers
-    : teamMembers.filter(m => m.batch === selectedBatch);
+    : teamMembers.filter(m => isBatchMatch(m.batch, selectedBatch));
 
   // Group team members by batch for structured section layout when 'All' is selected
   const groupedBatches = allBatches.filter(b => b !== 'All').map(batchName => ({
     batch: batchName,
-    members: teamMembers.filter(m => m.batch === batchName)
+    members: teamMembers.filter(m => isBatchMatch(m.batch, batchName))
   })).filter(g => g.members.length > 0);
 
   return (

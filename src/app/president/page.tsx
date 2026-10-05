@@ -140,7 +140,7 @@ export default function PresidentPage() {
 
   const [teamForm, setTeamForm] = useState<Omit<TeamMember, 'id'>>({
     name: '',
-    batch: '2026–27',
+    batch: '2025',
     domain: 'Data Science',
     role: 'Executive Member',
     photo: '',
@@ -1277,6 +1277,12 @@ export default function PresidentPage() {
               }} className="space-y-3 text-xs">
                 <input required placeholder="Member Full Name" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.name} onChange={e => setTeamForm({...teamForm, name: e.target.value})} />
                 <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.batch} onChange={e => setTeamForm({...teamForm, batch: e.target.value})}>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
                   <option value="2026–27">2026–27</option>
                   <option value="2025–26">2025–26</option>
                   <option value="2024–25">2024–25</option>
@@ -1517,6 +1523,12 @@ export default function PresidentPage() {
               }} className="space-y-3 text-xs">
                 <input required placeholder="Member Full Name" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.name} onChange={e => setTeamForm({...teamForm, name: e.target.value})} />
                 <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={teamForm.batch} onChange={e => setTeamForm({...teamForm, batch: e.target.value})}>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
                   <option value="2026–27">2026–27</option>
                   <option value="2025–26">2025–26</option>
                   <option value="2024–25">2024–25</option>
