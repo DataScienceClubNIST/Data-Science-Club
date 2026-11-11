@@ -254,6 +254,8 @@ CREATE POLICY "Enable full access projects" ON public.projects FOR ALL USING (tr
 CREATE POLICY "Enable full access gallery" ON public.gallery FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable full access recruitment_settings" ON public.recruitment_settings FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Enable full access recruitment_applications" ON public.recruitment_applications FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access idea2odishi_registrations" ON public.idea2odishi_registrations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable full access codearena_registrations" ON public.codearena_registrations FOR ALL USING (true) WITH CHECK (true);
 
 -- ==============================================================================
 -- SUPABASE STORAGE BUCKET FOR IMAGE UPLOADS
