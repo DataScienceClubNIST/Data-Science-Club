@@ -5,6 +5,7 @@ import SafeImage from '@/components/SafeImage';
 import { Project } from '@/types';
 import { ExternalLink, Sparkles } from 'lucide-react';
 import { GithubIcon } from '@/components/SocialIcons';
+import { formatExternalUrl } from '@/lib/urlUtils';
 
 interface ProjectCardProps {
   project: Project;
@@ -23,7 +24,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             className="group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-          
+
           <div className="absolute top-3 left-3 flex items-center space-x-2">
             <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/90 text-white shadow-md">
               {project.domain}
@@ -51,7 +52,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <div className="p-5 pt-0 flex items-center space-x-2">
         {project.project_url && (
           <a
-            href={project.project_url}
+            href={formatExternalUrl(project.project_url)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 py-2 px-3 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors flex items-center justify-center space-x-1.5 shadow-md"
@@ -63,7 +64,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         {project.github_url && (
           <a
-            href={project.github_url}
+            href={formatExternalUrl(project.github_url)}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-cyan-500 border border-slate-200 dark:border-slate-700 transition-colors"

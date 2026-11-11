@@ -11,7 +11,9 @@ import {
   GalleryItem, 
   RecruitmentSettings, 
   RecruitmentApplication, 
-  AdminUser 
+  AdminUser,
+  Idea2OdishiRegistration,
+  CodeArenaRegistration
 } from '@/types';
 import { 
   INITIAL_EVENTS, 
@@ -89,6 +91,14 @@ interface DataContextType {
   updateRecruitmentSettings: (settings: Partial<RecruitmentSettings>) => Promise<void>;
   submitApplication: (app: Omit<RecruitmentApplication, 'id' | 'submitted_at' | 'status'>) => Promise<boolean>;
   deleteApplication: (id: string) => Promise<void>;
+
+  // Event Registrations (Idea2Odishi & Code Arena 2.0)
+  idea2OdishiRegistrations: Idea2OdishiRegistration[];
+  codeArenaRegistrations: CodeArenaRegistration[];
+  submitIdea2OdishiRegistration: (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'>) => Promise<string>;
+  submitCodeArenaRegistration: (data: Omit<CodeArenaRegistration, 'id' | 'submitted_at'>) => Promise<string>;
+  deleteIdea2OdishiRegistration: (id: string) => Promise<void>;
+  deleteCodeArenaRegistration: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -105,6 +115,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [applications, setApplications] = useState<RecruitmentApplication[]>([]);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [alumniBatches, setAlumniBatches] = useState<string[]>(['2020', '2021', '2022', '2023']);
+  const [idea2OdishiRegistrations, setIdea2OdishiRegistrations] = useState<Idea2OdishiRegistration[]>([]);
+  const [codeArenaRegistrations, setCodeArenaRegistrations] = useState<CodeArenaRegistration[]>([]);
 
   const [dbStatus, setDbStatus] = useState<DbStatus>({
     isConfigured: isSupabaseConfigured,
@@ -189,9 +201,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const storedAdmin = localStorage.getItem('dsc_admin_session');
       const storedAlumniBatches = localStorage.getItem('dsc_alumni_batches');
 
-      // 1. Initial Local / Default Fallback state
-      setEvents(storedEvents ? JSON.parse(storedEvents) : INITIAL_EVENTS);
-      setSankalpEvents(storedSankalp ? JSON.parse(storedSankalp) : INITIAL_SANKALP_EVENTS);
+      const storedI2O = localStorage.getItem('dsc_reg_idea2odishi');
+      const storedCA = localStorage.getItem('dsc_reg_codearena');
+
+      // 1. Initial Local / Default Fallback state (merging newly introduced seed events)
+      const parsedEvents: ClubEvent[] = storedEvents ? JSON.parse(storedEvents) : INITIAL_EVENTS;
+      const missingEvents = INITIAL_EVENTS.filter(ie => !parsedEvents.some(pe => pe.id === ie.id || pe.title === ie.title));
+      const combinedEvents = [...missingEvents, ...parsedEvents];
+      setEvents(combinedEvents);
+
+      const parsedSankalp: SankalpEvent[] = storedSankalp ? JSON.parse(storedSankalp) : INITIAL_SANKALP_EVENTS;
+      const missingSankalp = INITIAL_SANKALP_EVENTS.filter(is => !parsedSankalp.some(ps => ps.id === is.id || ps.title === is.title));
+      const combinedSankalp = [...missingSankalp, ...parsedSankalp];
+      setSankalpEvents(combinedSankalp);
+
       setAchievements(storedAchievements ? JSON.parse(storedAchievements) : INITIAL_ACHIEVEMENTS);
       setAdvisors(storedAdvisors ? JSON.parse(storedAdvisors) : INITIAL_ADVISORS);
       setTeamMembers(storedTeam ? JSON.parse(storedTeam) : INITIAL_TEAM_MEMBERS);
@@ -199,6 +222,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setGallery(storedGallery ? JSON.parse(storedGallery) : INITIAL_GALLERY);
       setRecruitmentSettings(storedRecSettings ? JSON.parse(storedRecSettings) : INITIAL_RECRUITMENT_SETTINGS);
       setApplications(storedApps ? JSON.parse(storedApps) : INITIAL_APPLICATIONS);
+      if (storedI2O) setIdea2OdishiRegistrations(JSON.parse(storedI2O));
+      if (storedCA) setCodeArenaRegistrations(JSON.parse(storedCA));
       if (storedAlumniBatches) {
         setAlumniBatches(JSON.parse(storedAlumniBatches));
       }
@@ -677,6 +702,75 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Event Registrations CRUD
+  const submitIdea2OdishiRegistration = async (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'>): Promise<string> => {
+    const regId = `I2O-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newReg: Idea2OdishiRegistration = {
+      ...data,
+      id: regId,
+      submitted_at: new Date().toISOString()
+    };
+    const updated = [newReg, ...idea2OdishiRegistrations];
+    setIdea2OdishiRegistrations(updated);
+    saveStorage('dsc_reg_idea2odishi', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('idea2odishi_registrations').insert([newReg]);
+      } catch (err) {
+        console.warn('Supabase Idea2Odishi registration note:', err);
+      }
+    }
+    return regId;
+  };
+
+  const submitCodeArenaRegistration = async (data: Omit<CodeArenaRegistration, 'id' | 'submitted_at'>): Promise<string> => {
+    const regId = `CA2-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newReg: CodeArenaRegistration = {
+      ...data,
+      id: regId,
+      submitted_at: new Date().toISOString()
+    };
+    const updated = [newReg, ...codeArenaRegistrations];
+    setCodeArenaRegistrations(updated);
+    saveStorage('dsc_reg_codearena', updated);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('codearena_registrations').insert([newReg]);
+      } catch (err) {
+        console.warn('Supabase Code Arena registration note:', err);
+      }
+    }
+    return regId;
+  };
+
+  const deleteIdea2OdishiRegistration = async (id: string) => {
+    const updated = idea2OdishiRegistrations.filter(r => r.id !== id);
+    setIdea2OdishiRegistrations(updated);
+    saveStorage('dsc_reg_idea2odishi', updated);
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('idea2odishi_registrations').delete().eq('id', id);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  };
+
+  const deleteCodeArenaRegistration = async (id: string) => {
+    const updated = codeArenaRegistrations.filter(r => r.id !== id);
+    setCodeArenaRegistrations(updated);
+    saveStorage('dsc_reg_codearena', updated);
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('codearena_registrations').delete().eq('id', id);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -722,7 +816,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         toggleRecruitment,
         updateRecruitmentSettings,
         submitApplication,
-        deleteApplication
+        deleteApplication,
+        idea2OdishiRegistrations,
+        codeArenaRegistrations,
+        submitIdea2OdishiRegistration,
+        submitCodeArenaRegistration,
+        deleteIdea2OdishiRegistration,
+        deleteCodeArenaRegistration
       }}
     >
       {children}

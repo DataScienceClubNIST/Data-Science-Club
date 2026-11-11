@@ -73,7 +73,7 @@ export default function AnimeHeroVisual() {
   }, []);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="relative w-full h-[400px] sm:h-[480px] flex items-center justify-center select-none"
     >
@@ -81,8 +81,8 @@ export default function AnimeHeroVisual() {
       <div className="anime-pulse-ring absolute w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] rounded-full bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-3xl" />
 
       {/* SVG Connecting Neural Lines */}
-      <svg 
-        ref={svgRef} 
+      <svg
+        ref={svgRef}
         className="absolute inset-0 w-full h-full pointer-events-none stroke-cyan-500/40 dark:stroke-cyan-400/40"
       >
         <path className="anime-line" d="M 60,80 Q 200,40 340,120 T 450,300" strokeWidth="2" strokeDasharray="400" strokeDashoffset="400" fill="none" />
@@ -92,7 +92,7 @@ export default function AnimeHeroVisual() {
 
       {/* Interactive Layer of Anime.js Nodes */}
       <div className="anime-interactive-layer relative w-full h-full flex items-center justify-center">
-        
+
         {/* Center Main Node */}
         <div className="anime-node anime-float absolute w-28 h-28 sm:w-36 sm:h-36 rounded-3xl bg-slate-900/90 dark:bg-slate-900/90 border border-cyan-500/50 shadow-2xl shadow-cyan-500/30 flex flex-col items-center justify-center text-center p-3 backdrop-blur-xl z-20">
           <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-lg mb-1">
@@ -127,7 +127,7 @@ export default function AnimeHeroVisual() {
         </div>
 
         {/* Orbit Node 5: Web Dev */}
-        <div className="anime-node anime-float absolute top-1/2 -right-2 transform -translate-y-1/2 px-3 py-2 rounded-2xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 backdrop-blur-md text-white text-xs font-bold shadow-lg flex items-center space-x-2">
+        <div className="anime-node anime-float absolute top-1/2 right-2 sm:right-6 transform -translate-y-1/2 px-3 py-2 rounded-2xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 backdrop-blur-md text-white text-xs font-bold shadow-lg flex items-center space-x-2">
           <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
           <span>Web Dev</span>
         </div>

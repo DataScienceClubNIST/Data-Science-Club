@@ -37,9 +37,12 @@ import {
   Database,
   RefreshCw,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  ExternalLink,
+  FileText
 } from 'lucide-react';
 import { ImageUploader } from '@/components/ImageUploader';
+import { formatExternalUrl } from '@/lib/urlUtils';
 
 export default function PresidentPage() {
   const { 
@@ -82,6 +85,10 @@ export default function PresidentPage() {
     deleteAdvisor,
     toggleRecruitment,
     deleteApplication,
+    idea2OdishiRegistrations,
+    codeArenaRegistrations,
+    deleteIdea2OdishiRegistration,
+    deleteCodeArenaRegistration,
     dbStatus,
     refreshConnection
   } = useData();
@@ -101,13 +108,68 @@ export default function PresidentPage() {
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<
-    'events' | 'sankalp' | 'achievements' | 'team' | 'projects' | 'gallery' | 'advisors' | 'recruitment'
+    'events' | 'sankalp' | 'registrations' | 'achievements' | 'team' | 'projects' | 'gallery' | 'advisors' | 'recruitment'
   >('events');
 
   // Modal forms state
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingItem, setEditingItem] = useState<{ id: string; type: string; data: any } | null>(null);
   const [selectedApp, setSelectedApp] = useState<any>(null);
+  const [eventRegSubTab, setEventRegSubTab] = useState<'idea2odishi' | 'codearena'>('idea2odishi');
+  const [selectedReg, setSelectedReg] = useState<any>(null);
+
+  const exportIdea2OdishiCSV = () => {
+    if (idea2OdishiRegistrations.length === 0) return;
+    const headers = ['ID', 'Participation', 'Lead Name', 'Lead Roll', 'Lead Stream', 'Lead Year', 'Lead Phone', 'Problem Statement', 'PPT Link', 'Member 2 Name', 'Member 2 Roll', 'Member 2 Stream', 'Member 2 Year', 'Member 2 Phone', 'Submitted At'];
+    const rows = idea2OdishiRegistrations.map(r => [
+      r.id,
+      r.participation_type,
+      `"${r.name.replace(/"/g, '""')}"`,
+      r.roll,
+      `"${r.stream_branch.replace(/"/g, '""')}"`,
+      r.year,
+      r.phone,
+      `"${r.problem_statement.replace(/"/g, '""')}"`,
+      r.ppt_url || '',
+      `"${(r.member2_name || '').replace(/"/g, '""')}"`,
+      r.member2_roll || '',
+      `"${(r.member2_stream_branch || '').replace(/"/g, '""')}"`,
+      r.member2_year || '',
+      r.member2_phone || '',
+      r.submitted_at
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `Idea2Odishi_Registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportCodeArenaCSV = () => {
+    if (codeArenaRegistrations.length === 0) return;
+    const headers = ['ID', 'Name', 'Roll', 'Year', 'Stream & Branch', 'Phone', 'Email', 'Submitted At'];
+    const rows = codeArenaRegistrations.map(r => [
+      r.id,
+      `"${r.name.replace(/"/g, '""')}"`,
+      r.roll,
+      r.year,
+      `"${r.stream_branch.replace(/"/g, '""')}"`,
+      r.phone,
+      r.email,
+      r.submitted_at
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `CodeArena_Registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Form states for adding / editing items
   const [eventForm, setEventForm] = useState<Omit<ClubEvent, 'id'>>({
@@ -119,6 +181,7 @@ export default function PresidentPage() {
     venue: '',
     category: 'Workshop',
     registration_link: '',
+    contest_link: '',
     result: '',
     status: 'Register Now'
   });
@@ -131,6 +194,7 @@ export default function PresidentPage() {
     image: '',
     venue: '',
     registration_link: '',
+    contest_link: '',
     result: '',
     status: 'Register Now'
   });
@@ -204,6 +268,7 @@ export default function PresidentPage() {
       venue: 'Data Science Lab 1, NIST Campus',
       category: 'Workshop',
       registration_link: 'https://nist.ac.in/events/genai-2026',
+      contest_link: 'https://kaggle.com/competitions/genai-sprint-2026',
       result: '120+ students deployed local LLM fine-tuned models.'
     });
   };
@@ -217,7 +282,9 @@ export default function PresidentPage() {
       image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
       venue: 'Outdoor Robotics Track, NIST',
       registration_link: 'https://sankalp.nist.edu/rover-challenge',
-      result: 'Cash prize pool worth ₹35,000.'
+      contest_link: 'https://github.com/nist-dsc/sankalp-rover-challenge-2026',
+      result: 'Cash prize pool worth ₹35,000.',
+      status: 'Register Now'
     });
   };
 
@@ -292,6 +359,7 @@ export default function PresidentPage() {
         venue: item.venue,
         category: item.category,
         registration_link: item.registration_link || '',
+        contest_link: item.contest_link || '',
         result: item.result || '',
         status: item.status || 'Register Now'
       });
@@ -304,6 +372,7 @@ export default function PresidentPage() {
         image: item.image || '',
         venue: item.venue,
         registration_link: item.registration_link || '',
+        contest_link: item.contest_link || '',
         result: item.result || '',
         status: item.status || 'Register Now'
       });
@@ -549,6 +618,7 @@ export default function PresidentPage() {
         {[
           { key: 'events', label: `Events (${events.length})`, icon: Calendar },
           { key: 'sankalp', label: `Sankalp (${sankalpEvents.length})`, icon: Sparkles },
+          { key: 'registrations', label: `Registrations (${idea2OdishiRegistrations.length + codeArenaRegistrations.length})`, icon: FileText },
           { key: 'achievements', label: `Achievements (${achievements.length})`, icon: Trophy },
           { key: 'team', label: `Team (${teamMembers.length})`, icon: Users },
           { key: 'projects', label: `Projects (${projects.length})`, icon: FolderGit2 },
@@ -594,7 +664,7 @@ export default function PresidentPage() {
               <button
                 onClick={() => {
                   setEventForm({
-                    title: '', year: 2026, date: '', description: '', image: '', venue: '', category: 'Workshop', registration_link: '', result: ''
+                    title: '', year: 2026, date: '', description: '', image: '', venue: '', category: 'Workshop', registration_link: '', contest_link: '', result: '', status: 'Register Now'
                   });
                   setShowAddModal(true);
                 }}
@@ -622,7 +692,35 @@ export default function PresidentPage() {
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                 {events.map((e) => (
                   <tr key={e.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                    <td className="p-4 font-bold text-slate-900 dark:text-white">{e.title}</td>
+                    <td className="p-4 font-bold text-slate-900 dark:text-white">
+                      <div>{e.title}</div>
+                      <div className="flex flex-wrap items-center gap-2 mt-1 font-normal">
+                        {e.contest_link && (
+                          <a
+                            href={formatExternalUrl(e.contest_link)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] text-purple-600 dark:text-purple-400 hover:underline flex items-center space-x-0.5"
+                            title="Direct Contest Link"
+                          >
+                            <span>Contest</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
+                        {e.registration_link && (
+                          <a
+                            href={formatExternalUrl(e.registration_link)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] text-cyan-600 dark:text-cyan-400 hover:underline flex items-center space-x-0.5"
+                            title="Direct Registration Link"
+                          >
+                            <span>Registration</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
+                      </div>
+                    </td>
                     <td className="p-4 font-mono">{e.year}</td>
                     <td className="p-4"><span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold">{e.category}</span></td>
                     <td className="p-4">
@@ -673,7 +771,7 @@ export default function PresidentPage() {
               <button
                 onClick={() => {
                   setSankalpForm({
-                    title: '', year: 2026, date: '', description: '', image: '', venue: '', registration_link: '', result: '', status: 'Register Now'
+                    title: '', year: 2026, date: '', description: '', image: '', venue: '', registration_link: '', contest_link: '', result: '', status: 'Register Now'
                   });
                   setShowAddModal(true);
                 }}
@@ -700,7 +798,35 @@ export default function PresidentPage() {
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                 {sankalpEvents.map((e) => (
                   <tr key={e.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                    <td className="p-4 font-bold text-slate-900 dark:text-white">{e.title}</td>
+                    <td className="p-4 font-bold text-slate-900 dark:text-white">
+                      <div>{e.title}</div>
+                      <div className="flex flex-wrap items-center gap-2 mt-1 font-normal">
+                        {e.contest_link && (
+                          <a
+                            href={formatExternalUrl(e.contest_link)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] text-purple-600 dark:text-purple-400 hover:underline flex items-center space-x-0.5"
+                            title="Direct Separate Contest Link"
+                          >
+                            <span>Contest</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
+                        {e.registration_link && (
+                          <a
+                            href={formatExternalUrl(e.registration_link)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] text-cyan-600 dark:text-cyan-400 hover:underline flex items-center space-x-0.5"
+                            title="Direct Registration Link"
+                          >
+                            <span>Registration</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
+                      </div>
+                    </td>
                     <td className="p-4 font-mono font-bold text-purple-400">Sankalp {e.year}</td>
                     <td className="p-4">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
@@ -731,7 +857,243 @@ export default function PresidentPage() {
         </div>
       )}
 
-      {/* TAB CONTENT 3: ACHIEVEMENTS */}
+      {/* TAB CONTENT: EVENT REGISTRATIONS (IDEA2ODISHI & CODE ARENA 2.0) */}
+      {activeTab === 'registrations' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-cyan-500" />
+                <span>Sankalp 2026 Event Registrations</span>
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Live participant sign-ups for Idea2Odishi and Code Arena 2.0.
+              </p>
+            </div>
+
+            {/* SUB-TABS */}
+            <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+              <button
+                onClick={() => setEventRegSubTab('idea2odishi')}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  eventRegSubTab === 'idea2odishi'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                Idea2Odishi ({idea2OdishiRegistrations.length})
+              </button>
+              <button
+                onClick={() => setEventRegSubTab('codearena')}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  eventRegSubTab === 'codearena'
+                    ? 'bg-cyan-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                Code Arena 2.0 ({codeArenaRegistrations.length})
+              </button>
+            </div>
+          </div>
+
+          {/* SUB-TAB 1: IDEA2ODISHI */}
+          {eventRegSubTab === 'idea2odishi' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  Showing <strong>{idea2OdishiRegistrations.length}</strong> registered teams &amp; solo innovators
+                </div>
+                <div className="flex items-center space-x-2">
+                  <a
+                    href="/register/idea2odishi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 transition-colors flex items-center space-x-1"
+                  >
+                    <span>Open Form (New Tab)</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <button
+                    onClick={exportIdea2OdishiCSV}
+                    disabled={idea2OdishiRegistrations.length === 0}
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 transition-colors flex items-center space-x-1 shadow-sm disabled:opacity-40 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export CSV</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="glass-card overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-800">
+                    <tr>
+                      <th className="p-4">Reg ID</th>
+                      <th className="p-4">Mode</th>
+                      <th className="p-4">Lead Participant</th>
+                      <th className="p-4">Stream &amp; Year</th>
+                      <th className="p-4">Contact Phone</th>
+                      <th className="p-4">Co-Member (If Team)</th>
+                      <th className="p-4">Problem Statement</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                    {idea2OdishiRegistrations.length > 0 ? (
+                      idea2OdishiRegistrations.map((reg) => (
+                        <tr key={reg.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                          <td className="p-4 font-mono font-bold text-purple-500">{reg.id}</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              reg.participation_type === 'Team'
+                                ? 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30'
+                                : 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
+                            }`}>
+                              {reg.participation_type}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <div className="font-bold text-slate-900 dark:text-white">{reg.name}</div>
+                            <div className="font-mono text-[11px] text-slate-500">{reg.roll}</div>
+                          </td>
+                          <td className="p-4">
+                            <div>{reg.stream_branch}</div>
+                            <span className="text-[10px] font-bold text-amber-500">{reg.year}</span>
+                          </td>
+                          <td className="p-4 font-mono">{reg.phone}</td>
+                          <td className="p-4">
+                            {reg.participation_type === 'Team' && reg.member2_name ? (
+                              <div>
+                                <div className="font-semibold text-slate-900 dark:text-white">{reg.member2_name}</div>
+                                <div className="text-[11px] font-mono text-slate-500">{reg.member2_roll} • {reg.member2_year}</div>
+                                <div className="text-[10px] text-slate-400">{reg.member2_phone}</div>
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 italic">—</span>
+                            )}
+                          </td>
+                          <td className="p-4 max-w-xs">
+                            <p className="line-clamp-2 text-slate-600 dark:text-slate-400 text-[11px]">
+                              {reg.problem_statement}
+                            </p>
+                            {reg.ppt_url && (
+                              <a
+                                href={reg.ppt_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] text-purple-400 hover:underline flex items-center space-x-0.5 mt-0.5"
+                              >
+                                <span>View PPT Link</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
+                          </td>
+                          <td className="p-4 text-right">
+                            <button
+                              onClick={() => deleteIdea2OdishiRegistration(reg.id)}
+                              className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              title="Delete Registration"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={8} className="p-8 text-center text-slate-400">
+                          No Idea2Odishi registrations recorded yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SUB-TAB 2: CODE ARENA 2.0 */}
+          {eventRegSubTab === 'codearena' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  Showing <strong>{codeArenaRegistrations.length}</strong> registered speed coders
+                </div>
+                <div className="flex items-center space-x-2">
+                  <a
+                    href="/register/codearena"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors flex items-center space-x-1"
+                  >
+                    <span>Open Form (New Tab)</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <button
+                    onClick={exportCodeArenaCSV}
+                    disabled={codeArenaRegistrations.length === 0}
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors flex items-center space-x-1 shadow-sm disabled:opacity-40 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export CSV</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="glass-card overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-800">
+                    <tr>
+                      <th className="p-4">Reg ID</th>
+                      <th className="p-4">Participant Name</th>
+                      <th className="p-4">Roll Number</th>
+                      <th className="p-4">Year</th>
+                      <th className="p-4">Stream &amp; Branch</th>
+                      <th className="p-4">Phone</th>
+                      <th className="p-4">Email Address</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                    {codeArenaRegistrations.length > 0 ? (
+                      codeArenaRegistrations.map((reg) => (
+                        <tr key={reg.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                          <td className="p-4 font-mono font-bold text-cyan-500">{reg.id}</td>
+                          <td className="p-4 font-bold text-slate-900 dark:text-white">{reg.name}</td>
+                          <td className="p-4 font-mono font-bold text-purple-400">{reg.roll}</td>
+                          <td className="p-4">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                              {reg.year}
+                            </span>
+                          </td>
+                          <td className="p-4 text-slate-600 dark:text-slate-400">{reg.stream_branch}</td>
+                          <td className="p-4 font-mono">{reg.phone}</td>
+                          <td className="p-4 text-cyan-600 dark:text-cyan-400">{reg.email}</td>
+                          <td className="p-4 text-right">
+                            <button
+                              onClick={() => deleteCodeArenaRegistration(reg.id)}
+                              className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              title="Delete Registration"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={8} className="p-8 text-center text-slate-400">
+                          No Code Arena 2.0 registrations recorded yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {activeTab === 'achievements' && (
         <div className="space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -1228,9 +1590,9 @@ export default function PresidentPage() {
               <div><strong className="text-slate-400">Department & Batch:</strong> {selectedApp.department} ({selectedApp.batch})</div>
               <div><strong className="text-slate-400">Domains:</strong> Primary: {selectedApp.primary_domain} | Secondary: {selectedApp.secondary_domain}</div>
               <div><strong className="text-slate-400">Technical Skills:</strong> {selectedApp.skills}</div>
-              {selectedApp.linkedin && <div><strong className="text-slate-400">LinkedIn:</strong> <a href={selectedApp.linkedin} target="_blank" className="text-cyan-400 underline">{selectedApp.linkedin}</a></div>}
-              {selectedApp.github && <div><strong className="text-slate-400">GitHub:</strong> <a href={selectedApp.github} target="_blank" className="text-cyan-400 underline">{selectedApp.github}</a></div>}
-              {selectedApp.resume_url && <div><strong className="text-slate-400">Resume Link:</strong> <a href={selectedApp.resume_url} target="_blank" className="text-purple-400 underline">{selectedApp.resume_url}</a></div>}
+              {selectedApp.linkedin && <div><strong className="text-slate-400">LinkedIn:</strong> <a href={formatExternalUrl(selectedApp.linkedin)} target="_blank" rel="noopener noreferrer" className="text-cyan-400 underline">{selectedApp.linkedin}</a></div>}
+              {selectedApp.github && <div><strong className="text-slate-400">GitHub:</strong> <a href={formatExternalUrl(selectedApp.github)} target="_blank" rel="noopener noreferrer" className="text-cyan-400 underline">{selectedApp.github}</a></div>}
+              {selectedApp.resume_url && <div><strong className="text-slate-400">Resume Link:</strong> <a href={formatExternalUrl(selectedApp.resume_url)} target="_blank" rel="noopener noreferrer" className="text-purple-400 underline">{selectedApp.resume_url}</a></div>}
               
               <div className="pt-2">
                 <strong className="text-slate-400 block mb-1">Statement of Motivation:</strong>
@@ -1262,7 +1624,11 @@ export default function PresidentPage() {
             {editingItem.type === 'events' && (
               <form onSubmit={(e) => {
                 e.preventDefault();
-                updateEvent(editingItem.id, eventForm);
+                updateEvent(editingItem.id, {
+                  ...eventForm,
+                  registration_link: formatExternalUrl(eventForm.registration_link),
+                  contest_link: formatExternalUrl(eventForm.contest_link)
+                });
                 setEditingItem(null);
               }} className="space-y-3 text-xs">
                 <div>
@@ -1311,9 +1677,15 @@ export default function PresidentPage() {
                   value={eventForm.image}
                   onChange={url => setEventForm({...eventForm, image: url})}
                 />
-                <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Registration Link (Optional)</label>
-                  <input placeholder="Registration Link" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.registration_link} onChange={e => setEventForm({...eventForm, registration_link: e.target.value})} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">Registration Link (Optional)</label>
+                    <input placeholder="https://forms.gle/... or URL" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.registration_link} onChange={e => setEventForm({...eventForm, registration_link: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">Contest Link (Optional Separate Link)</label>
+                    <input placeholder="https://hackerrank.com/... or unstop.com/..." className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.contest_link || ''} onChange={e => setEventForm({...eventForm, contest_link: e.target.value})} />
+                  </div>
                 </div>
                 <div>
                   <label className="text-[11px] font-bold text-slate-400 block mb-1">Result / Outcome (Optional)</label>
@@ -1327,29 +1699,63 @@ export default function PresidentPage() {
             {editingItem.type === 'sankalp' && (
               <form onSubmit={(e) => {
                 e.preventDefault();
-                updateSankalpEvent(editingItem.id, sankalpForm);
+                updateSankalpEvent(editingItem.id, {
+                  ...sankalpForm,
+                  registration_link: formatExternalUrl(sankalpForm.registration_link),
+                  contest_link: formatExternalUrl(sankalpForm.contest_link)
+                });
                 setEditingItem(null);
               }} className="space-y-3 text-xs">
-                <input required placeholder="Activity Title" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.title} onChange={e => setSankalpForm({...sankalpForm, title: e.target.value})} />
-                <div className="grid grid-cols-2 gap-3">
-                  <input type="number" required placeholder="Fest Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.year} onChange={e => setSankalpForm({...sankalpForm, year: Number(e.target.value)})} />
-                  <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-semibold" value={sankalpForm.status || 'Register Now'} onChange={e => setSankalpForm({...sankalpForm, status: e.target.value as any})}>
-                    <option value="Coming soon...">Coming soon...</option>
-                    <option value="Register Now">Register Now</option>
-                    <option value="Registration Closed">Registration Closed</option>
-                  </select>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Activity Title *</label>
+                  <input required placeholder="Activity Title" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.title} onChange={e => setSankalpForm({...sankalpForm, title: e.target.value})} />
                 </div>
-                <input required placeholder="Date String" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.date} onChange={e => setSankalpForm({...sankalpForm, date: e.target.value})} />
-                <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.venue} onChange={e => setSankalpForm({...sankalpForm, venue: e.target.value})} />
-                <textarea required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.description} onChange={e => setSankalpForm({...sankalpForm, description: e.target.value})} />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">Fest Year *</label>
+                    <input type="number" required placeholder="Fest Year" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.year} onChange={e => setSankalpForm({...sankalpForm, year: Number(e.target.value)})} />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">Status *</label>
+                    <select className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-semibold" value={sankalpForm.status || 'Register Now'} onChange={e => setSankalpForm({...sankalpForm, status: e.target.value as any})}>
+                      <option value="Coming soon...">Coming soon...</option>
+                      <option value="Register Now">Register Now</option>
+                      <option value="Registration Closed">Registration Closed</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Date String *</label>
+                  <input required placeholder="Date String" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.date} onChange={e => setSankalpForm({...sankalpForm, date: e.target.value})} />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Venue *</label>
+                  <input required placeholder="Venue" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.venue} onChange={e => setSankalpForm({...sankalpForm, venue: e.target.value})} />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Description *</label>
+                  <textarea rows={3} required placeholder="Description" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.description} onChange={e => setSankalpForm({...sankalpForm, description: e.target.value})} />
+                </div>
                 <ImageUploader
                   label="Sankalp Activity Banner"
                   folder="sankalp"
                   value={sankalpForm.image}
                   onChange={url => setSankalpForm({...sankalpForm, image: url})}
                 />
-                <input placeholder="Registration Link" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.registration_link} onChange={e => setSankalpForm({...sankalpForm, registration_link: e.target.value})} />
-                <input placeholder="Result Notes" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.result} onChange={e => setSankalpForm({...sankalpForm, result: e.target.value})} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">Registration Link (Optional)</label>
+                    <input placeholder="https://sankalp.nist.edu/... or forms.gle" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.registration_link} onChange={e => setSankalpForm({...sankalpForm, registration_link: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-400 block mb-1">Contest Link (Optional Separate Link)</label>
+                    <input placeholder="https://hackerrank.com/... or unstop.com/..." className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.contest_link || ''} onChange={e => setSankalpForm({...sankalpForm, contest_link: e.target.value})} />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Result Notes (Optional)</label>
+                  <input placeholder="Result Notes" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.result} onChange={e => setSankalpForm({...sankalpForm, result: e.target.value})} />
+                </div>
                 <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 font-bold text-white cursor-pointer hover:bg-purple-500">Update Sankalp Activity</button>
               </form>
             )}
@@ -1562,7 +1968,11 @@ export default function PresidentPage() {
             {activeTab === 'events' && (
               <form onSubmit={(e) => {
                 e.preventDefault();
-                addEvent(eventForm);
+                addEvent({
+                  ...eventForm,
+                  registration_link: formatExternalUrl(eventForm.registration_link),
+                  contest_link: formatExternalUrl(eventForm.contest_link)
+                });
                 setShowAddModal(false);
               }} className="space-y-3 text-xs">
                 <input required placeholder="Event Title" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.title} onChange={e => setEventForm({...eventForm, title: e.target.value})} />
@@ -1593,7 +2003,10 @@ export default function PresidentPage() {
                   value={eventForm.image}
                   onChange={url => setEventForm({...eventForm, image: url})}
                 />
-                <input placeholder="Registration Link (Optional)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.registration_link} onChange={e => setEventForm({...eventForm, registration_link: e.target.value})} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input placeholder="Registration Link (Optional)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.registration_link} onChange={e => setEventForm({...eventForm, registration_link: e.target.value})} />
+                  <input placeholder="Contest Link (Optional separate link)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.contest_link || ''} onChange={e => setEventForm({...eventForm, contest_link: e.target.value})} />
+                </div>
                 <input placeholder="Result Notes (Optional)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={eventForm.result} onChange={e => setEventForm({...eventForm, result: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white cursor-pointer hover:bg-cyan-500">Publish Event Card</button>
               </form>
@@ -1602,7 +2015,11 @@ export default function PresidentPage() {
             {activeTab === 'sankalp' && (
               <form onSubmit={(e) => {
                 e.preventDefault();
-                addSankalpEvent(sankalpForm);
+                addSankalpEvent({
+                  ...sankalpForm,
+                  registration_link: formatExternalUrl(sankalpForm.registration_link),
+                  contest_link: formatExternalUrl(sankalpForm.contest_link)
+                });
                 setShowAddModal(false);
               }} className="space-y-3 text-xs">
                 <input required placeholder="Activity Title" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.title} onChange={e => setSankalpForm({...sankalpForm, title: e.target.value})} />
@@ -1623,7 +2040,10 @@ export default function PresidentPage() {
                   value={sankalpForm.image}
                   onChange={url => setSankalpForm({...sankalpForm, image: url})}
                 />
-                <input placeholder="Registration Link" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.registration_link} onChange={e => setSankalpForm({...sankalpForm, registration_link: e.target.value})} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input placeholder="Registration Link (e.g., https://sankalp.nist.edu/... or forms.gle)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.registration_link} onChange={e => setSankalpForm({...sankalpForm, registration_link: e.target.value})} />
+                  <input placeholder="Contest Link (Separate link for contest/hackathon)" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.contest_link || ''} onChange={e => setSankalpForm({...sankalpForm, contest_link: e.target.value})} />
+                </div>
                 <input placeholder="Result Notes" className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white" value={sankalpForm.result} onChange={e => setSankalpForm({...sankalpForm, result: e.target.value})} />
                 <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 font-bold text-white cursor-pointer hover:bg-purple-500">Publish Sankalp Activity</button>
               </form>

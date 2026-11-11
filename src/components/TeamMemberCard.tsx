@@ -5,6 +5,7 @@ import SafeImage from '@/components/SafeImage';
 import { TeamMember, Advisor } from '@/types';
 import { Mail, RotateCw, Sparkles, ShieldCheck } from 'lucide-react';
 import { LinkedinIcon, GithubIcon } from '@/components/SocialIcons';
+import { formatExternalUrl } from '@/lib/urlUtils';
 
 interface TeamMemberCardProps {
   member: TeamMember | Advisor;
@@ -73,7 +74,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
               <div className="flex items-center space-x-2">
                 {adv.linkedin && (
                   <a
-                    href={adv.linkedin}
+                    href={formatExternalUrl(adv.linkedin)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
@@ -180,7 +181,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
             <div className="flex items-center justify-center space-x-2">
               {tm.linkedin ? (
                 <a
-                  href={tm.linkedin}
+                  href={formatExternalUrl(tm.linkedin)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
@@ -192,7 +193,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
               ) : null}
               {tm.github ? (
                 <a
-                  href={tm.github}
+                  href={formatExternalUrl(tm.github)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}

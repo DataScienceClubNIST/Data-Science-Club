@@ -18,11 +18,13 @@ CREATE TABLE IF NOT EXISTS public.events (
   venue TEXT NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('Workshop', 'Competition', 'Hackathon', 'Tech Talk', 'Seminar')),
   registration_link TEXT,
+  contest_link TEXT,
   result TEXT,
   status TEXT DEFAULT 'Register Now' CHECK (status IN ('Coming soon...', 'Register Now', 'Registration Closed')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.events ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Register Now';
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS contest_link TEXT;
 
 -- 2. SANKALP EVENTS TABLE
 CREATE TABLE IF NOT EXISTS public.sankalp_events (
@@ -34,11 +36,13 @@ CREATE TABLE IF NOT EXISTS public.sankalp_events (
   image TEXT NOT NULL,
   venue TEXT NOT NULL,
   registration_link TEXT,
+  contest_link TEXT,
   result TEXT,
   status TEXT DEFAULT 'Register Now' CHECK (status IN ('Coming soon...', 'Register Now', 'Registration Closed')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.sankalp_events ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Register Now';
+ALTER TABLE public.sankalp_events ADD COLUMN IF NOT EXISTS contest_link TEXT;
 
 -- 3. ACHIEVEMENTS TABLE
 CREATE TABLE IF NOT EXISTS public.achievements (
@@ -134,6 +138,37 @@ CREATE TABLE IF NOT EXISTS public.recruitment_applications (
   resume_url TEXT,
   submitted_at TIMESTAMPTZ DEFAULT NOW(),
   status TEXT DEFAULT 'Pending' CHECK (status IN ('Pending', 'Under Review', 'Accepted', 'Rejected'))
+);
+
+-- 10. IDEA2ODISHI REGISTRATIONS TABLE
+CREATE TABLE IF NOT EXISTS public.idea2odishi_registrations (
+  id TEXT PRIMARY KEY,
+  participation_type TEXT NOT NULL CHECK (participation_type IN ('Solo', 'Team')),
+  name TEXT NOT NULL,
+  roll TEXT NOT NULL,
+  stream_branch TEXT NOT NULL,
+  year TEXT NOT NULL CHECK (year IN ('1st Year', '2nd Year')),
+  phone TEXT NOT NULL,
+  problem_statement TEXT NOT NULL,
+  ppt_url TEXT,
+  member2_name TEXT,
+  member2_roll TEXT,
+  member2_stream_branch TEXT,
+  member2_year TEXT,
+  member2_phone TEXT,
+  submitted_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 11. CODE ARENA 2.0 REGISTRATIONS TABLE
+CREATE TABLE IF NOT EXISTS public.codearena_registrations (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  roll TEXT NOT NULL,
+  year TEXT NOT NULL CHECK (year IN ('1st Year', '2nd Year')),
+  phone TEXT NOT NULL,
+  stream_branch TEXT NOT NULL,
+  email TEXT NOT NULL,
+  submitted_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- 10. KEEP ALIVE PINGS TABLE (For automated 48-hr keep-alive triggers without disturbing main data)

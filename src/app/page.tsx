@@ -13,18 +13,18 @@ import AnimeHeading from '@/components/AnimeHeading';
 import AnimeScrollReveal from '@/components/AnimeScrollReveal';
 import DomainScrollShowcase from '@/components/DomainScrollShowcase';
 import { useData } from '@/context/DataContext';
-import { 
-  BookOpen, 
-  Hammer, 
-  Presentation, 
-  Trophy, 
-  ArrowRight, 
-  Sparkles, 
-  UserPlus, 
-  ChevronRight, 
-  Star, 
-  Layers, 
-  Mail, 
+import {
+  BookOpen,
+  Hammer,
+  Presentation,
+  Trophy,
+  ArrowRight,
+  Sparkles,
+  UserPlus,
+  ChevronRight,
+  Star,
+  Layers,
+  Mail,
   CheckCircle2,
   Calendar,
   Compass
@@ -98,12 +98,12 @@ export default function HomePage() {
 
   return (
     <div className="space-y-24 pb-20">
-      
+
       {/* 1. HERO SECTION */}
       <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-32 overflow-hidden hero-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
+
             {/* HERO TEXT */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400">

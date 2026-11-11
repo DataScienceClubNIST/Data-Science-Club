@@ -17,6 +17,7 @@ export interface ClubEvent {
   venue: string;
   category: 'Workshop' | 'Competition' | 'Hackathon' | 'Tech Talk' | 'Seminar';
   registration_link?: string;
+  contest_link?: string;
   result?: string;
   status?: EventStatus;
 }
@@ -30,6 +31,7 @@ export interface SankalpEvent {
   image: string;
   venue: string;
   registration_link?: string;
+  contest_link?: string;
   result?: string;
   status?: EventStatus;
 }
@@ -121,4 +123,38 @@ export interface AdminUser {
   name: string;
   email: string;
   role: AdminRole;
+}
+
+export type EligibleYear = '1st Year' | '2nd Year';
+
+export interface Idea2OdishiRegistration {
+  id: string;
+  submitted_at: string;
+  participation_type: 'Solo' | 'Team';
+  // Leader / Solo details
+  name: string;
+  roll: string;
+  stream_branch: string;
+  year: EligibleYear;
+  phone: string;
+  problem_statement: string;
+  ppt_url?: string;
+  
+  // Team Member (if participation_type === 'Team')
+  member2_name?: string;
+  member2_roll?: string;
+  member2_stream_branch?: string;
+  member2_year?: EligibleYear;
+  member2_phone?: string;
+}
+
+export interface CodeArenaRegistration {
+  id: string;
+  submitted_at: string;
+  name: string;
+  roll: string;
+  year: EligibleYear;
+  phone: string;
+  stream_branch: string;
+  email: string;
 }

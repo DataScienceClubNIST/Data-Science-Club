@@ -216,6 +216,34 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
 
 export const INITIAL_EVENTS: ClubEvent[] = [
   {
+    id: 'evt-2026-idea2odishi',
+    title: 'Idea2Odishi (Ideathon & Pitch Clash)',
+    year: 2026,
+    date: 'March 28, 2026',
+    description: 'Flagship ideathon for 1st & 2nd year students at Sankalp Tech Fest. Present game-changing tech and startup solutions for Odisha. Participation is Solo or Team (2 members). Download the official PPT template to prepare your deck.',
+    image: '/images/sankalp_banner.jpg',
+    venue: 'NIST Seminar Hall 1 & Auditorium',
+    category: 'Competition',
+    registration_link: '/register/idea2odishi',
+    contest_link: '/templates/Idea2Odishi_Pitch_Template.pptx',
+    result: 'Exclusively for 1st & 2nd Year Students | Cash Prizes + Incubation Support',
+    status: 'Register Now'
+  },
+  {
+    id: 'evt-2026-codearena',
+    title: 'Code Arena 2.0 (Speed Coding Clash)',
+    year: 2026,
+    date: 'March 29, 2026',
+    description: 'Intense algorithmic and speed coding battle at Sankalp Tech Fest for 1st & 2nd year coders. Test your mastery of data structures, algorithms, and dynamic problem solving in real time.',
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
+    venue: 'NIST Computer Center (Lab 1 & 2)',
+    category: 'Competition',
+    registration_link: '/register/codearena',
+    contest_link: 'https://hackerrank.com/sankalp-code-arena-2',
+    result: 'Exclusively for 1st & 2nd Year Students | Certificates & Prize Pool',
+    status: 'Register Now'
+  },
+  {
     id: 'evt-2026-1',
     title: 'Hands-on Deep Learning with PyTorch & CUDA',
     year: 2026,
@@ -314,6 +342,32 @@ export const INITIAL_EVENTS: ClubEvent[] = [
 
 export const INITIAL_SANKALP_EVENTS: SankalpEvent[] = [
   {
+    id: 'snk-2026-idea2odishi',
+    title: 'Sankalp 2026: Idea2Odishi',
+    year: 2026,
+    date: 'March 28, 2026',
+    description: 'Flagship ideathon for 1st & 2nd year students at Sankalp Tech Fest. Present game-changing tech and startup solutions for Odisha. Participation is Solo or Team (2 members). Download the official PPT template to prepare your deck.',
+    image: '/images/sankalp_banner.jpg',
+    venue: 'NIST Seminar Hall 1 & Auditorium',
+    registration_link: '/register/idea2odishi',
+    contest_link: '/templates/Idea2Odishi_Pitch_Template.pptx',
+    result: 'Exclusively for 1st & 2nd Year Students | Cash Prizes + Incubation Support',
+    status: 'Register Now'
+  },
+  {
+    id: 'snk-2026-codearena',
+    title: 'Sankalp 2026: Code Arena 2.0',
+    year: 2026,
+    date: 'March 29, 2026',
+    description: 'Intense algorithmic and speed coding battle at Sankalp Tech Fest for 1st & 2nd year coders. Test your mastery of data structures, algorithms, and dynamic problem solving in real time.',
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
+    venue: 'NIST Computer Center (Lab 1 & 2)',
+    registration_link: '/register/codearena',
+    contest_link: 'https://hackerrank.com/sankalp-code-arena-2',
+    result: 'Exclusively for 1st & 2nd Year Students | Certificates & Prize Pool',
+    status: 'Register Now'
+  },
+  {
     id: 'snk-2026-1',
     title: 'Sankalp 2026: AI Grand Prix Hackathon',
     year: 2026,
@@ -322,7 +376,9 @@ export const INITIAL_SANKALP_EVENTS: SankalpEvent[] = [
     image: '/images/sankalp_banner.jpg',
     venue: 'NIST Central Arena',
     registration_link: 'https://sankalp.nist.edu/register-ai-hackathon',
-    result: 'Registration active! Prize pool: ₹50,000.'
+    contest_link: 'https://unstop.com/hackathons/sankalp-ai-grand-prix-2026',
+    result: 'Registration active! Prize pool: ₹50,000.',
+    status: 'Register Now'
   },
   {
     id: 'snk-2026-2',
@@ -332,7 +388,9 @@ export const INITIAL_SANKALP_EVENTS: SankalpEvent[] = [
     description: 'Line tracking and obstacle avoidance challenge using micro-cameras and computer vision algorithms.',
     image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
     venue: 'Outdoor Robotics Track, NIST Campus',
-    registration_link: 'https://sankalp.nist.edu/register-bot-race'
+    registration_link: 'https://sankalp.nist.edu/register-bot-race',
+    contest_link: 'https://github.com/nist-dsc/sankalp-bot-race-2026',
+    status: 'Register Now'
   },
   {
     id: 'snk-2025-1',
@@ -342,7 +400,8 @@ export const INITIAL_SANKALP_EVENTS: SankalpEvent[] = [
     description: 'Live dataset visualization and business insights competition judged by industry leaders from Microsoft & Amazon.',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
     venue: 'NIST Computer Center',
-    result: 'Winners: Team DataViz Masters (NIST B.Tech CSE).'
+    result: 'Winners: Team DataViz Masters (NIST B.Tech CSE).',
+    status: 'Registration Closed'
   },
   {
     id: 'snk-2024-1',
@@ -352,7 +411,8 @@ export const INITIAL_SANKALP_EVENTS: SankalpEvent[] = [
     description: 'Optimize neural network inference latency on restricted hardware benchmarks.',
     image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
     venue: 'Lab 5',
-    result: '1st Place: Team EdgeAI NIST.'
+    result: '1st Place: Team EdgeAI NIST.',
+    status: 'Registration Closed'
   }
 ];
 

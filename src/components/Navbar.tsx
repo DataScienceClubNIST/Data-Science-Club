@@ -53,7 +53,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 glass-nav transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* LOGO & BRANDING */}
           <Link href="/" className="flex items-center space-x-3.5 group">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white p-1 border border-cyan-500/40 group-hover:border-cyan-400 transition-all duration-300 shadow-md group-hover:shadow-cyan-500/20">
@@ -83,11 +83,10 @@ export default function Navbar() {
                 <Link
                   key={link.path}
                   href={link.path}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    isActive
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${isActive
                       ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
                       : 'text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-                  }`}
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -98,11 +97,10 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsOthersOpen(!isOthersOpen)}
-                className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                  isOthersActive || isOthersOpen
+                className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${isOthersActive || isOthersOpen
                     ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
                     : 'text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-                }`}
+                  }`}
               >
                 <span>Others</span>
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOthersOpen ? 'rotate-180 text-cyan-500' : ''}`} />
@@ -120,11 +118,10 @@ export default function Navbar() {
                           key={item.path}
                           href={item.path}
                           onClick={() => setIsOthersOpen(false)}
-                          className={`flex items-start space-x-3 p-3 rounded-xl transition-all duration-200 ${
-                            isActive
+                          className={`flex items-start space-x-3 p-3 rounded-xl transition-all duration-200 ${isActive
                               ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 font-semibold'
                               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-cyan-600 dark:hover:text-cyan-400'
-                          }`}
+                            }`}
                         >
                           <Icon className="w-5 h-5 mt-0.5 text-cyan-500 shrink-0" />
                           <div>
@@ -167,11 +164,10 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 href={link.path}
-                className={`block px-4 py-2.5 rounded-xl text-base font-semibold transition-all ${
-                  pathname === link.path
+                className={`block px-4 py-2.5 rounded-xl text-base font-semibold transition-all ${pathname === link.path
                     ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
+                  }`}
               >
                 {link.name}
               </Link>
@@ -189,11 +185,10 @@ export default function Navbar() {
                   <Link
                     key={item.path}
                     href={item.path}
-                    className={`flex items-center space-x-3 px-4 py-2.5 rounded-xl text-base font-medium transition-all ${
-                      pathname === item.path
+                    className={`flex items-center space-x-3 px-4 py-2.5 rounded-xl text-base font-medium transition-all ${pathname === item.path
                         ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 font-semibold'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
+                      }`}
                   >
                     <Icon className="w-5 h-5 text-cyan-500" />
                     <span>{item.name}</span>

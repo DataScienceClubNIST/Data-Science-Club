@@ -19,6 +19,8 @@ interface DomainItem {
   badgeBg: string;
   icon: any;
   illustrationType: 'data-science' | 'machine-learning' | 'deep-learning' | 'opencv' | 'web-dev';
+  videoSrc?: string;
+  gifSrc?: string;
 }
 
 const DOMAIN_SHOWCASE_DATA: DomainItem[] = [
@@ -85,14 +87,15 @@ const DOMAIN_SHOWCASE_DATA: DomainItem[] = [
     border: 'border-amber-500/40',
     badgeBg: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
     icon: Code,
-    illustrationType: 'web-dev'
+    illustrationType: 'web-dev',
+    gifSrc: '/images/webd.gif'
   }
 ];
 
 export default function DomainScrollShowcase() {
   return (
     <div className="space-y-20">
-      
+
       {/* SHOWCASE HEADER */}
       <AnimeScrollReveal variant="fade-up">
         <div className="space-y-4">
@@ -115,9 +118,9 @@ export default function DomainScrollShowcase() {
           const isEven = index % 2 === 0;
 
           return (
-            <AnimeScrollReveal 
-              key={domain.id} 
-              variant={isEven ? 'fade-up' : 'zoom-in'} 
+            <AnimeScrollReveal
+              key={domain.id}
+              variant={isEven ? 'fade-up' : 'zoom-in'}
               threshold={0.15}
             >
               <div className="glass-card p-6 sm:p-10 relative overflow-hidden border border-slate-800 hover:border-cyan-500/40 transition-all duration-500 bg-[#0c0f1d]/90">
@@ -125,11 +128,11 @@ export default function DomainScrollShowcase() {
                 <div className={`absolute top-0 ${isEven ? 'right-0' : 'left-0'} w-96 h-96 bg-gradient-to-br ${domain.gradient} rounded-full blur-3xl opacity-40 pointer-events-none`} />
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center relative z-10">
-                  
+
                   {/* VISUAL ILLUSTRATION CARD (Matching uploaded layout!) */}
                   <div className={`lg:col-span-6 ${!isEven ? 'lg:order-2' : ''}`}>
-                    <div className={`relative w-full h-[280px] sm:h-[340px] rounded-2xl bg-slate-950/80 border ${domain.border} shadow-2xl p-6 flex flex-col justify-between overflow-hidden group`}>
-                      
+                    <div className={`relative w-full min-h-[300px] sm:min-h-[360px] rounded-2xl bg-slate-950/80 border ${domain.border} shadow-2xl p-5 sm:p-6 flex flex-col justify-between overflow-hidden group`}>
+
                       {/* Top Header inside card */}
                       <div className="flex items-center justify-between">
                         <div className={`w-12 h-12 rounded-xl ${domain.badgeBg} border flex items-center justify-center font-bold shadow-lg`}>
@@ -140,41 +143,63 @@ export default function DomainScrollShowcase() {
                         </span>
                       </div>
 
-                      {/* CENTER ISOMETRIC GRAPHIC & PILLS */}
-                      <div className="relative my-auto flex flex-col items-center justify-center space-y-3 py-4">
-                        
-                        {/* Interactive floating badges */}
-                        <div className="flex flex-wrap justify-center gap-2 max-w-xs">
-                          {domain.subtopics.slice(0, 3).map((topic, i) => (
-                            <span 
-                              key={i} 
-                              className="px-3 py-1 rounded-full text-xs font-bold bg-slate-900/90 text-slate-200 border border-slate-700/80 shadow-md flex items-center space-x-1 group-hover:scale-105 transition-transform"
-                            >
-                              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                              <span>{topic}</span>
+                      {/* CENTER ANIMATION (GIF OR VIDEO) OR ISOMETRIC GRAPHIC */}
+                      {domain.gifSrc ? (
+                        <div className="relative my-auto flex items-center justify-center py-2 h-48 sm:h-60 w-full overflow-hidden rounded-xl">
+                          <Image
+                            src={domain.gifSrc}
+                            alt={domain.name}
+                            width={500}
+                            height={300}
+                            unoptimized
+                            className="w-full h-full max-h-[220px] object-contain rounded-xl shadow-lg"
+                          />
+                        </div>
+                      ) : domain.videoSrc ? (
+                        <div className="relative my-auto flex items-center justify-center py-2 h-48 sm:h-60 w-full overflow-hidden rounded-xl">
+                          <video
+                            src={domain.videoSrc}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full h-full max-h-[220px] object-contain rounded-xl shadow-lg"
+                          />
+                        </div>
+                      ) : (
+                        <div className="relative my-auto flex flex-col items-center justify-center space-y-3 py-4">
+                          {/* Interactive floating badges */}
+                          <div className="flex flex-wrap justify-center gap-2 max-w-xs">
+                            {domain.subtopics.slice(0, 3).map((topic, i) => (
+                              <span
+                                key={i}
+                                className="px-3 py-1 rounded-full text-xs font-bold bg-slate-900/90 text-slate-200 border border-slate-700/80 shadow-md flex items-center space-x-1 group-hover:scale-105 transition-transform"
+                              >
+                                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                                <span>{topic}</span>
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Central Graphic Box */}
+                          <div className="w-32 h-20 sm:w-40 sm:h-24 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-900/90 to-slate-800 border border-slate-700 flex items-center justify-center p-3 text-center shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                            <span className="text-xs sm:text-sm font-extrabold text-white tracking-wide">
+                              {domain.name} Stack
                             </span>
-                          ))}
-                        </div>
+                          </div>
 
-                        {/* Central Graphic Box */}
-                        <div className="w-32 h-20 sm:w-40 sm:h-24 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-900/90 to-slate-800 border border-slate-700 flex items-center justify-center p-3 text-center shadow-2xl group-hover:scale-105 transition-transform duration-500">
-                          <span className="text-xs sm:text-sm font-extrabold text-white tracking-wide">
-                            {domain.name} Stack
-                          </span>
+                          <div className="flex flex-wrap justify-center gap-2 max-w-xs">
+                            {domain.subtopics.slice(3).map((topic, i) => (
+                              <span
+                                key={i}
+                                className="px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-900/90 text-cyan-300 border border-cyan-500/30 shadow-md"
+                              >
+                                {topic}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-
-                        <div className="flex flex-wrap justify-center gap-2 max-w-xs">
-                          {domain.subtopics.slice(3).map((topic, i) => (
-                            <span 
-                              key={i} 
-                              className="px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-900/90 text-cyan-300 border border-cyan-500/30 shadow-md"
-                            >
-                              {topic}
-                            </span>
-                          ))}
-                        </div>
-
-                      </div>
+                      )}
 
                       {/* Card Footer */}
                       <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 border-t border-slate-800/80 pt-3">
