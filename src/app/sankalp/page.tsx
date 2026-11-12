@@ -5,7 +5,7 @@ import SafeImage from '@/components/SafeImage';
 import EventCard from '@/components/EventCard';
 import AnimeStaggerGrid from '@/components/AnimeStaggerGrid';
 import { useData } from '@/context/DataContext';
-import { Sparkles, Calendar, Trophy, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Calendar, Trophy, ChevronRight, CheckCircle2, Maximize2 } from 'lucide-react';
 
 export default function SankalpPage() {
   const { sankalpEvents } = useData();
@@ -20,33 +20,77 @@ export default function SankalpPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
       
-      {/* HEADER BANNER */}
-      <div className="relative rounded-3xl overflow-hidden border border-purple-500/30 bg-slate-950 p-8 sm:p-14 text-white shadow-2xl">
-        <div className="absolute inset-0 z-0">
-          <SafeImage
-            src="/images/sankalp_banner.jpg"
-            fallbackSrc="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
-            alt="Sankalp NIST Tech Fest"
-            fill
-            className="opacity-35"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
-        </div>
-
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span>Official Tech Fest of NIST University</span>
+      {/* SANKALP BANNER HERO SHOWCASE */}
+      <div className="space-y-6">
+        <div className="relative rounded-3xl overflow-hidden border border-purple-500/30 bg-slate-950 shadow-2xl group">
+          {/* Ambient background blur using the banner colors */}
+          <div className="absolute inset-0 overflow-hidden filter blur-2xl scale-105 opacity-30 pointer-events-none">
+            <SafeImage
+              src="/images/sankalp_banner.jpg"
+              fallbackSrc="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
+              alt=""
+              fill
+              fit="cover"
+            />
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight">
-            SANKALP <span className="text-cyan-400">TECH FEST</span>
-          </h1>
+          {/* Responsive Banner Display Container:
+              Naturally holds the ultrawide ~2.71 aspect ratio on large screens,
+              and flexible aspect ratio on mobile so virtually the entire banner is visible! */}
+          <div className="relative z-10 w-full aspect-[21/9] sm:aspect-[2048/754] min-h-[200px] max-h-[500px] flex items-center justify-center p-1 sm:p-2">
+            <SafeImage
+              src="/images/sankalp_banner.jpg"
+              fallbackSrc="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
+              alt="Sankalp NIST Tech Fest Official Banner"
+              fill
+              fit="contain"
+              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.01]"
+              priority
+            />
 
-          <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-            <strong className="text-white">Sankalp</strong> is the flagship annual technical festival of <strong className="text-white">NIST University</strong>. As an officially recognized student club of NIST, the Data Science Club drives the AI, Machine Learning, Computer Vision, and Data Engineering events for Sankalp.
-          </p>
+            {/* Direct button to open full-resolution banner */}
+            <a
+              href="/images/sankalp_banner.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900/85 hover:bg-slate-800 text-white backdrop-blur-md border border-slate-700/60 shadow-lg flex items-center space-x-1.5 transition-all opacity-80 hover:opacity-100 cursor-pointer"
+              title="Open full resolution banner in new tab"
+            >
+              <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Full Banner</span>
+            </a>
+          </div>
+        </div>
+
+        {/* FEST DETAILS & INFORMATION CARD */}
+        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-purple-500/20 bg-gradient-to-r from-slate-900/90 via-slate-900/80 to-purple-950/30">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-3xl">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span>Official Tech Fest of NIST University</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+                SANKALP <span className="text-cyan-400">TECH FEST</span>
+              </h1>
+
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                <strong className="text-white">Sankalp</strong> is the flagship annual technical festival of <strong className="text-white">NIST University</strong>. As an officially recognized student club of NIST, the Data Science Club drives the AI, Machine Learning, Computer Vision, and Data Engineering events for Sankalp.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap lg:flex-col gap-3 shrink-0">
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-xs">
+                <div className="text-slate-400 font-medium">Flagship Fest</div>
+                <div className="text-cyan-400 font-bold text-base">Sankalp 2026</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-xs">
+                <div className="text-slate-400 font-medium">Organized By</div>
+                <div className="text-purple-300 font-bold text-base">Data Science Club</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

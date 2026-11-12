@@ -263,18 +263,41 @@ export default function HomePage() {
       {/* 5. SANKALP HIGHLIGHT */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimeScrollReveal variant="zoom-in">
-          <div className="relative rounded-3xl overflow-hidden border border-cyan-500/30 bg-slate-950 p-8 lg:p-12 text-white shadow-2xl">
-            <div className="absolute inset-0 z-0">
-              <Image
-                src="/images/sankalp_banner.jpg"
-                alt="Sankalp Tech Fest NIST University"
-                fill
-                className="object-cover opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-transparent" />
+          <div className="relative rounded-3xl overflow-hidden border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 lg:p-10 text-white shadow-2xl space-y-8">
+            {/* Dedicated Flexible Sankalp Banner Preview */}
+            <div className="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-900/60 shadow-xl group">
+              {/* Ambient Glow */}
+              <div className="absolute inset-0 overflow-hidden filter blur-2xl scale-110 opacity-30 pointer-events-none">
+                <Image
+                  src="/images/sankalp_banner.jpg"
+                  alt=""
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              {/* Full Banner Artwork - 100% visible with responsive aspect ratio */}
+              <div className="relative z-10 w-full aspect-[21/9] sm:aspect-[2048/754] min-h-[160px] max-h-[340px] flex items-center justify-center p-1 sm:p-2">
+                <Image
+                  src="/images/sankalp_banner.jpg"
+                  alt="Sankalp Tech Fest NIST University"
+                  fill
+                  className="object-contain transition-transform duration-700 group-hover:scale-[1.01]"
+                  priority
+                />
+
+                <Link
+                  href="/sankalp"
+                  className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900/85 hover:bg-slate-800 text-white backdrop-blur-md border border-slate-700/60 shadow-lg flex items-center space-x-1.5 transition-all opacity-85 hover:opacity-100 cursor-pointer"
+                >
+                  <span>Fest Portal</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
+                </Link>
+              </div>
             </div>
 
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Information Grid & Current Events */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-8 space-y-4">
                 <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
                   <Sparkles className="w-3.5 h-3.5" />
@@ -286,13 +309,13 @@ export default function HomePage() {
                 </h2>
 
                 <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
-                  Sankalp is the annual tech fest of NIST University. As a student club within NIST, the Data Science Club organizes flagship hackathons, OpenCV bot races, and data analytics challenges during Sankalp.
+                  Sankalp is the annual tech fest of NIST University. As an officially recognized student club within NIST, the Data Science Club organizes flagship hackathons, ideathons, and coding challenges during Sankalp.
                 </p>
 
                 <div className="pt-2 flex flex-wrap gap-4">
                   <Link
                     href="/sankalp"
-                    className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors inline-flex items-center space-x-2 shadow-lg"
+                    className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors inline-flex items-center space-x-2 shadow-lg shadow-cyan-500/20"
                   >
                     <span>Explore Sankalp 2026 Events</span>
                     <ArrowRight className="w-4 h-4" />

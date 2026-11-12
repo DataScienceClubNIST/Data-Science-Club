@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import SafeImage from '@/components/SafeImage';
 import { ClubEvent, SankalpEvent } from '@/types';
-import { Calendar, MapPin, ExternalLink, Trophy, X } from 'lucide-react';
+import { Calendar, MapPin, ExternalLink, Trophy, X, Maximize2 } from 'lucide-react';
 import { formatExternalUrl } from '@/lib/urlUtils';
 
 interface EventCardProps {
@@ -18,21 +18,41 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
   return (
     <>
       <div className="glass-card shine-hover overflow-hidden flex flex-col justify-between group">
-        <div className="relative h-48 w-full overflow-hidden bg-slate-800">
-          <SafeImage
-            src={event.image}
-            fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
-            alt={event.title}
-            fill
-            className="group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+        {/* POSTER DISPLAY CONTAINER - Flexible aspect ratio with dual-layer contain */}
+        <div className="relative aspect-[16/10] sm:aspect-[4/3] w-full overflow-hidden bg-slate-950 flex items-center justify-center">
+          {/* Layer 1: Ambient Backdrop Blur (fills letterboxing naturally with poster colors) */}
+          <div className="absolute inset-0 overflow-hidden filter blur-xl scale-110 opacity-35 dark:opacity-40 pointer-events-none">
+            <SafeImage
+              src={event.image}
+              fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+              alt=""
+              fill
+              fit="cover"
+            />
+          </div>
+
+          {/* Layer 2: Full Crisp Poster (fit="contain" ensures 100% of event poster text/dates/graphics are visible) */}
+          <div className="relative z-10 w-full h-full p-2 flex items-center justify-center">
+            <SafeImage
+              src={event.image}
+              fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+              alt={event.title}
+              fill
+              fit="contain"
+              className="group-hover:scale-[1.03] transition-transform duration-500 drop-shadow-md"
+            />
+          </div>
+
+          {/* Subtle gradient vignette at top and bottom edges so badges and content blend elegantly */}
+          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-slate-950/60 via-slate-950/20 to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-slate-950/50 to-transparent pointer-events-none z-10" />
           
-          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center">
+          {/* Top badges floating with z-20 */}
+          <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-1.5 items-center">
             <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-cyan-500/90 text-white shadow-md">
               {event.year}
             </span>
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-slate-200 border border-slate-700/60">
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-900/85 backdrop-blur-md text-slate-200 border border-slate-700/60 shadow-sm">
               {category}
             </span>
             {event.status && (
@@ -130,37 +150,83 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
 
       {/* EVENT DETAIL MODAL */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-slate-900/80 text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              className="absolute top-3 right-3 z-30 p-2 rounded-full bg-slate-900/85 text-white hover:bg-slate-800 transition-colors cursor-pointer border border-slate-700/60 shadow-lg"
+              title="Close"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="relative h-64 w-full bg-slate-950">
-              <SafeImage
-                src={event.image}
-                fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
-                alt={event.title}
-                fill
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-6 right-6">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500 text-white">
-                    Year {event.year}
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-200 border border-slate-700">
-                    {category}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-extrabold text-white">{event.title}</h2>
+            {/* MODAL POSTER SHOWCASE - Dual Layer Contain with Ambient Backlight */}
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] min-h-[220px] max-h-[460px] w-full bg-slate-950 flex items-center justify-center overflow-hidden shrink-0">
+              {/* Layer 1: Ambient background blur */}
+              <div className="absolute inset-0 overflow-hidden filter blur-2xl scale-110 opacity-35 dark:opacity-40 pointer-events-none">
+                <SafeImage
+                  src={event.image}
+                  fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+                  alt=""
+                  fill
+                  fit="cover"
+                />
               </div>
+
+              {/* Layer 2: Full crisp uncropped poster */}
+              <div className="relative z-10 w-full h-full p-3 flex items-center justify-center">
+                <SafeImage
+                  src={event.image}
+                  fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+                  alt={event.title}
+                  fill
+                  fit="contain"
+                  className="drop-shadow-2xl"
+                />
+              </div>
+
+              {/* View Full Poster button */}
+              {event.image && (
+                <a
+                  href={event.image}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-3 right-3 z-20 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900/85 hover:bg-slate-800 text-white backdrop-blur-md border border-slate-700/60 shadow-lg flex items-center space-x-1.5 transition-all opacity-90 hover:opacity-100 cursor-pointer"
+                  title="View poster in full resolution"
+                >
+                  <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Full Poster</span>
+                </a>
+              )}
             </div>
 
             <div className="p-6 overflow-y-auto space-y-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500 text-white shadow-sm">
+                    Year {event.year}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                    {category}
+                  </span>
+                  {event.status && (
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                        event.status === 'Register Now'
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                          : event.status === 'Coming soon...'
+                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 font-bold'
+                          : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                      }`}
+                    >
+                      {event.status}
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                  {event.title}
+                </h2>
+              </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-medium bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/50">
                 <div className="flex items-center space-x-2">
                   <Calendar className="w-4 h-4 text-cyan-500" />
