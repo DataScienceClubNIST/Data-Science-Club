@@ -99,6 +99,7 @@ interface DataContextType {
   submitCodeArenaRegistration: (data: Omit<CodeArenaRegistration, 'id' | 'submitted_at'>) => Promise<string>;
   deleteIdea2OdishiRegistration: (id: string) => Promise<void>;
   deleteCodeArenaRegistration: (id: string) => Promise<void>;
+  refreshRegistrations: () => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -244,7 +245,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             { data: projData, error: projErr },
             { data: galData, error: galErr },
             { data: recData, error: recErr },
-            { data: appData, error: appErr }
+            { data: appData, error: appErr },
+            { data: i2oData, error: i2oErr },
+            { data: caData, error: caErr }
           ] = await Promise.all([
             supabase.from('events').select('*').order('created_at', { ascending: false }),
             supabase.from('sankalp_events').select('*').order('created_at', { ascending: false }),
@@ -254,10 +257,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             supabase.from('projects').select('*'),
             supabase.from('gallery').select('*'),
             supabase.from('recruitment_settings').select('*').limit(1),
-            supabase.from('recruitment_applications').select('*').order('submitted_at', { ascending: false })
+            supabase.from('recruitment_applications').select('*').order('submitted_at', { ascending: false }),
+            supabase.from('idea2odishi_registrations').select('*').order('submitted_at', { ascending: false }),
+            supabase.from('codearena_registrations').select('*').order('submitted_at', { ascending: false })
           ]);
 
-          const errors = [eventsErr, sankalpErr, achErr, advErr, teamErr, projErr, galErr, recErr, appErr].filter(Boolean);
+          const errors = [eventsErr, sankalpErr, achErr, advErr, teamErr, projErr, galErr, recErr, appErr, i2oErr, caErr].filter(Boolean);
 
           if (errors.length > 0) {
             const firstErr = errors[0];
@@ -287,6 +292,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             if (galData) { setGallery(galData); saveStorage('dsc_gallery', galData); }
             if (recData && recData.length > 0) { setRecruitmentSettings(recData[0]); saveStorage('dsc_rec_settings', recData[0]); }
             if (appData) { setApplications(appData); saveStorage('dsc_applications', appData); }
+            if (i2oData) { setIdea2OdishiRegistrations(i2oData); saveStorage('dsc_reg_idea2odishi', i2oData); }
+            if (caData) { setCodeArenaRegistrations(caData); saveStorage('dsc_reg_codearena', caData); }
           }
         } catch (e: any) {
           console.warn('[Supabase Sync]: Failed to fetch remote database data, using local fallback.', e);
@@ -703,6 +710,36 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Event Registrations CRUD
+  const refreshRegistrations = async () => {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const [
+          { data: i2oData, error: i2oErr },
+          { data: caData, error: caErr }
+        ] = await Promise.all([
+          supabase.from('idea2odishi_registrations').select('*').order('submitted_at', { ascending: false }),
+          supabase.from('codearena_registrations').select('*').order('submitted_at', { ascending: false })
+        ]);
+
+        if (!i2oErr && i2oData) {
+          setIdea2OdishiRegistrations(i2oData);
+          saveStorage('dsc_reg_idea2odishi', i2oData);
+        }
+        if (!caErr && caData) {
+          setCodeArenaRegistrations(caData);
+          saveStorage('dsc_reg_codearena', caData);
+        }
+      } catch (err) {
+        console.error('Error refreshing registrations from Supabase:', err);
+      }
+    } else {
+      const storedI2O = localStorage.getItem('dsc_reg_idea2odishi');
+      const storedCA = localStorage.getItem('dsc_reg_codearena');
+      if (storedI2O) setIdea2OdishiRegistrations(JSON.parse(storedI2O));
+      if (storedCA) setCodeArenaRegistrations(JSON.parse(storedCA));
+    }
+  };
+
   const submitIdea2OdishiRegistration = async (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'>): Promise<string> => {
     const regId = `I2O-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const newReg: Idea2OdishiRegistration = {
@@ -716,7 +753,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from('idea2odishi_registrations').insert([newReg]);
+        const { error } = await supabase.from('idea2odishi_registrations').insert([newReg]);
+        if (error) {
+          console.error('Supabase Idea2Odishi registration error:', error);
+        }
       } catch (err) {
         console.warn('Supabase Idea2Odishi registration note:', err);
       }
@@ -737,7 +777,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from('codearena_registrations').insert([newReg]);
+        const { error } = await supabase.from('codearena_registrations').insert([newReg]);
+        if (error) {
+          console.error('Supabase Code Arena registration error:', error);
+        }
       } catch (err) {
         console.warn('Supabase Code Arena registration note:', err);
       }
@@ -751,7 +794,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveStorage('dsc_reg_idea2odishi', updated);
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from('idea2odishi_registrations').delete().eq('id', id);
+        const { error } = await supabase.from('idea2odishi_registrations').delete().eq('id', id);
+        if (error) console.error('Error deleting idea2odishi registration:', error);
       } catch (e) {
         console.warn(e);
       }
@@ -764,7 +808,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveStorage('dsc_reg_codearena', updated);
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from('codearena_registrations').delete().eq('id', id);
+        const { error } = await supabase.from('codearena_registrations').delete().eq('id', id);
+        if (error) console.error('Error deleting codearena registration:', error);
       } catch (e) {
         console.warn(e);
       }
@@ -822,7 +867,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         submitIdea2OdishiRegistration,
         submitCodeArenaRegistration,
         deleteIdea2OdishiRegistration,
-        deleteCodeArenaRegistration
+        deleteCodeArenaRegistration,
+        refreshRegistrations
       }}
     >
       {children}

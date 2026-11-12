@@ -39,7 +39,8 @@ import {
   AlertTriangle,
   CheckCircle2,
   ExternalLink,
-  FileText
+  FileText,
+  Search
 } from 'lucide-react';
 import { ImageUploader } from '@/components/ImageUploader';
 import { formatExternalUrl } from '@/lib/urlUtils';
@@ -89,6 +90,7 @@ export default function PresidentPage() {
     codeArenaRegistrations,
     deleteIdea2OdishiRegistration,
     deleteCodeArenaRegistration,
+    refreshRegistrations,
     dbStatus,
     refreshConnection
   } = useData();
@@ -117,58 +119,123 @@ export default function PresidentPage() {
   const [selectedApp, setSelectedApp] = useState<any>(null);
   const [eventRegSubTab, setEventRegSubTab] = useState<'idea2odishi' | 'codearena'>('idea2odishi');
   const [selectedReg, setSelectedReg] = useState<any>(null);
+  const [regSearchQuery, setRegSearchQuery] = useState('');
+  const [isRefreshingRegs, setIsRefreshingRegs] = useState(false);
+
+  const handleRefreshRegs = async () => {
+    setIsRefreshingRegs(true);
+    await refreshRegistrations();
+    setIsRefreshingRegs(false);
+  };
+
+  const filteredIdea2Odishi = idea2OdishiRegistrations.filter((r) => {
+    if (!regSearchQuery.trim()) return true;
+    const q = regSearchQuery.toLowerCase();
+    return (
+      (r.name && r.name.toLowerCase().includes(q)) ||
+      (r.roll && r.roll.toLowerCase().includes(q)) ||
+      (r.phone && r.phone.toLowerCase().includes(q)) ||
+      (r.stream_branch && r.stream_branch.toLowerCase().includes(q)) ||
+      (r.problem_statement && r.problem_statement.toLowerCase().includes(q)) ||
+      (r.member2_name && r.member2_name.toLowerCase().includes(q)) ||
+      (r.member2_roll && r.member2_roll.toLowerCase().includes(q)) ||
+      (r.id && r.id.toLowerCase().includes(q))
+    );
+  });
+
+  const filteredCodeArena = codeArenaRegistrations.filter((r) => {
+    if (!regSearchQuery.trim()) return true;
+    const q = regSearchQuery.toLowerCase();
+    return (
+      (r.name && r.name.toLowerCase().includes(q)) ||
+      (r.roll && r.roll.toLowerCase().includes(q)) ||
+      (r.phone && r.phone.toLowerCase().includes(q)) ||
+      (r.email && r.email.toLowerCase().includes(q)) ||
+      (r.stream_branch && r.stream_branch.toLowerCase().includes(q)) ||
+      (r.id && r.id.toLowerCase().includes(q))
+    );
+  });
 
   const exportIdea2OdishiCSV = () => {
     if (idea2OdishiRegistrations.length === 0) return;
-    const headers = ['ID', 'Participation', 'Lead Name', 'Lead Roll', 'Lead Stream', 'Lead Year', 'Lead Phone', 'Problem Statement', 'PPT Link', 'Member 2 Name', 'Member 2 Roll', 'Member 2 Stream', 'Member 2 Year', 'Member 2 Phone', 'Submitted At'];
+    const headers = [
+      'Registration ID',
+      'Participation Type',
+      'Lead Participant Name',
+      'Lead Roll Number',
+      'Lead Stream & Branch',
+      'Lead Year',
+      'Lead Phone Number',
+      'Problem Statement',
+      'Pitch PPT Deck Link',
+      'Member 2 Name',
+      'Member 2 Roll Number',
+      'Member 2 Stream & Branch',
+      'Member 2 Year',
+      'Member 2 Phone Number',
+      'Registration Timestamp'
+    ];
     const rows = idea2OdishiRegistrations.map(r => [
-      r.id,
-      r.participation_type,
-      `"${r.name.replace(/"/g, '""')}"`,
-      r.roll,
-      `"${r.stream_branch.replace(/"/g, '""')}"`,
-      r.year,
-      r.phone,
-      `"${r.problem_statement.replace(/"/g, '""')}"`,
-      r.ppt_url || '',
+      `"${(r.id || '').replace(/"/g, '""')}"`,
+      `"${(r.participation_type || '').replace(/"/g, '""')}"`,
+      `"${(r.name || '').replace(/"/g, '""')}"`,
+      `"${(r.roll || '').replace(/"/g, '""')}"`,
+      `"${(r.stream_branch || '').replace(/"/g, '""')}"`,
+      `"${(r.year || '').replace(/"/g, '""')}"`,
+      `"${(r.phone || '').replace(/"/g, '""')}"`,
+      `"${(r.problem_statement || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
+      `"${(r.ppt_url || '').replace(/"/g, '""')}"`,
       `"${(r.member2_name || '').replace(/"/g, '""')}"`,
-      r.member2_roll || '',
+      `"${(r.member2_roll || '').replace(/"/g, '""')}"`,
       `"${(r.member2_stream_branch || '').replace(/"/g, '""')}"`,
-      r.member2_year || '',
-      r.member2_phone || '',
-      r.submitted_at
+      `"${(r.member2_year || '').replace(/"/g, '""')}"`,
+      `"${(r.member2_phone || '').replace(/"/g, '""')}"`,
+      `"${r.submitted_at ? new Date(r.submitted_at).toLocaleString('en-IN') : ''}"`
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.href = url;
     link.setAttribute('download', `Idea2Odishi_Registrations_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const exportCodeArenaCSV = () => {
     if (codeArenaRegistrations.length === 0) return;
-    const headers = ['ID', 'Name', 'Roll', 'Year', 'Stream & Branch', 'Phone', 'Email', 'Submitted At'];
+    const headers = [
+      'Registration ID',
+      'Participant Full Name',
+      'Roll Number',
+      'Academic Year',
+      'Stream & Department',
+      'Phone Number',
+      'Email Address',
+      'Registration Timestamp'
+    ];
     const rows = codeArenaRegistrations.map(r => [
-      r.id,
-      `"${r.name.replace(/"/g, '""')}"`,
-      r.roll,
-      r.year,
-      `"${r.stream_branch.replace(/"/g, '""')}"`,
-      r.phone,
-      r.email,
-      r.submitted_at
+      `"${(r.id || '').replace(/"/g, '""')}"`,
+      `"${(r.name || '').replace(/"/g, '""')}"`,
+      `"${(r.roll || '').replace(/"/g, '""')}"`,
+      `"${(r.year || '').replace(/"/g, '""')}"`,
+      `"${(r.stream_branch || '').replace(/"/g, '""')}"`,
+      `"${(r.phone || '').replace(/"/g, '""')}"`,
+      `"${(r.email || '').replace(/"/g, '""')}"`,
+      `"${r.submitted_at ? new Date(r.submitted_at).toLocaleString('en-IN') : ''}"`
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.href = url;
     link.setAttribute('download', `CodeArena_Registrations_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Form states for adding / editing items
@@ -867,33 +934,65 @@ export default function PresidentPage() {
                 <span>Sankalp 2026 Event Registrations</span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Live participant sign-ups for Idea2Odishi and Code Arena 2.0.
+                Live participant sign-ups fetched directly from database for Idea2Odishi and Code Arena 2.0.
               </p>
             </div>
 
-            {/* SUB-TABS */}
-            <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+            {/* SUB-TABS & SYNC BUTTON */}
+            <div className="flex items-center space-x-2 flex-wrap gap-2">
               <button
-                onClick={() => setEventRegSubTab('idea2odishi')}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  eventRegSubTab === 'idea2odishi'
-                    ? 'bg-purple-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                onClick={handleRefreshRegs}
+                disabled={isRefreshingRegs}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5 shadow-sm cursor-pointer border border-slate-300 dark:border-slate-700"
+                title="Fetch latest student signups from Supabase"
               >
-                Idea2Odishi ({idea2OdishiRegistrations.length})
+                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingRegs ? 'animate-spin text-cyan-500' : 'text-slate-400'}`} />
+                <span>{isRefreshingRegs ? 'Syncing...' : 'Sync Database'}</span>
               </button>
-              <button
-                onClick={() => setEventRegSubTab('codearena')}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  eventRegSubTab === 'codearena'
-                    ? 'bg-cyan-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Code Arena 2.0 ({codeArenaRegistrations.length})
-              </button>
+
+              <div className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+                <button
+                  onClick={() => setEventRegSubTab('idea2odishi')}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    eventRegSubTab === 'idea2odishi'
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Idea2Odishi ({idea2OdishiRegistrations.length})
+                </button>
+                <button
+                  onClick={() => setEventRegSubTab('codearena')}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    eventRegSubTab === 'codearena'
+                      ? 'bg-cyan-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Code Arena 2.0 ({codeArenaRegistrations.length})
+                </button>
+              </div>
             </div>
+          </div>
+
+          {/* SEARCH BAR */}
+          <div className="flex items-center bg-white dark:bg-slate-900 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <Search className="w-4 h-4 text-slate-400 ml-2 mr-2.5 shrink-0" />
+            <input
+              type="text"
+              placeholder={`Search ${eventRegSubTab === 'idea2odishi' ? 'Idea2Odishi' : 'Code Arena'} participants by name, roll number, stream, phone, or problem...`}
+              value={regSearchQuery}
+              onChange={(e) => setRegSearchQuery(e.target.value)}
+              className="w-full bg-transparent border-none text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
+            />
+            {regSearchQuery && (
+              <button
+                onClick={() => setRegSearchQuery('')}
+                className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1"
+              >
+                Clear
+              </button>
+            )}
           </div>
 
           {/* SUB-TAB 1: IDEA2ODISHI */}
@@ -901,7 +1000,7 @@ export default function PresidentPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Showing <strong>{idea2OdishiRegistrations.length}</strong> registered teams &amp; solo innovators
+                  Showing <strong>{filteredIdea2Odishi.length}</strong> of {idea2OdishiRegistrations.length} registered innovators
                 </div>
                 <div className="flex items-center space-x-2">
                   <a
@@ -910,7 +1009,7 @@ export default function PresidentPage() {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 transition-colors flex items-center space-x-1"
                   >
-                    <span>Open Form (New Tab)</span>
+                    <span>Open Form</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                   <button
@@ -919,7 +1018,7 @@ export default function PresidentPage() {
                     className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 transition-colors flex items-center space-x-1 shadow-sm disabled:opacity-40 cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Export CSV</span>
+                    <span>Download CSV (Excel)</span>
                   </button>
                 </div>
               </div>
@@ -939,9 +1038,9 @@ export default function PresidentPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {idea2OdishiRegistrations.length > 0 ? (
-                      idea2OdishiRegistrations.map((reg) => (
-                        <tr key={reg.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                    {filteredIdea2Odishi.length > 0 ? (
+                      filteredIdea2Odishi.map((reg) => (
+                        <tr key={reg.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="p-4 font-mono font-bold text-purple-500">{reg.id}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -989,20 +1088,33 @@ export default function PresidentPage() {
                             )}
                           </td>
                           <td className="p-4 text-right">
-                            <button
-                              onClick={() => deleteIdea2OdishiRegistration(reg.id)}
-                              className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer"
-                              title="Delete Registration"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center justify-end space-x-1">
+                              <button
+                                onClick={() => setSelectedReg(reg)}
+                                className="p-1.5 text-cyan-500 hover:bg-cyan-500/10 rounded-lg cursor-pointer transition-colors"
+                                title="View Full Details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete registration for ${reg.name} (${reg.id})?`)) {
+                                    deleteIdea2OdishiRegistration(reg.id);
+                                  }
+                                }}
+                                className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer transition-colors"
+                                title="Delete Registration"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
                         <td colSpan={8} className="p-8 text-center text-slate-400">
-                          No Idea2Odishi registrations recorded yet.
+                          {regSearchQuery ? 'No matching registrations found for your search.' : 'No Idea2Odishi registrations recorded yet.'}
                         </td>
                       </tr>
                     )}
@@ -1017,7 +1129,7 @@ export default function PresidentPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Showing <strong>{codeArenaRegistrations.length}</strong> registered speed coders
+                  Showing <strong>{filteredCodeArena.length}</strong> of {codeArenaRegistrations.length} registered speed coders
                 </div>
                 <div className="flex items-center space-x-2">
                   <a
@@ -1026,7 +1138,7 @@ export default function PresidentPage() {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 rounded-lg text-xs font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 transition-colors flex items-center space-x-1"
                   >
-                    <span>Open Form (New Tab)</span>
+                    <span>Open Form</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                   <button
@@ -1035,7 +1147,7 @@ export default function PresidentPage() {
                     className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-colors flex items-center space-x-1 shadow-sm disabled:opacity-40 cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Export CSV</span>
+                    <span>Download CSV (Excel)</span>
                   </button>
                 </div>
               </div>
@@ -1055,9 +1167,9 @@ export default function PresidentPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {codeArenaRegistrations.length > 0 ? (
-                      codeArenaRegistrations.map((reg) => (
-                        <tr key={reg.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                    {filteredCodeArena.length > 0 ? (
+                      filteredCodeArena.map((reg) => (
+                        <tr key={reg.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="p-4 font-mono font-bold text-cyan-500">{reg.id}</td>
                           <td className="p-4 font-bold text-slate-900 dark:text-white">{reg.name}</td>
                           <td className="p-4 font-mono font-bold text-purple-400">{reg.roll}</td>
@@ -1070,20 +1182,33 @@ export default function PresidentPage() {
                           <td className="p-4 font-mono">{reg.phone}</td>
                           <td className="p-4 text-cyan-600 dark:text-cyan-400">{reg.email}</td>
                           <td className="p-4 text-right">
-                            <button
-                              onClick={() => deleteCodeArenaRegistration(reg.id)}
-                              className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer"
-                              title="Delete Registration"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center justify-end space-x-1">
+                              <button
+                                onClick={() => setSelectedReg(reg)}
+                                className="p-1.5 text-cyan-500 hover:bg-cyan-500/10 rounded-lg cursor-pointer transition-colors"
+                                title="View Full Details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete registration for ${reg.name} (${reg.id})?`)) {
+                                    deleteCodeArenaRegistration(reg.id);
+                                  }
+                                }}
+                                className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer transition-colors"
+                                title="Delete Registration"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
                         <td colSpan={8} className="p-8 text-center text-slate-400">
-                          No Code Arena 2.0 registrations recorded yet.
+                          {regSearchQuery ? 'No matching registrations found for your search.' : 'No Code Arena 2.0 registrations recorded yet.'}
                         </td>
                       </tr>
                     )}
@@ -1092,6 +1217,187 @@ export default function PresidentPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* REGISTRATION DETAIL MODAL */}
+      {selectedReg && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className={`p-2.5 rounded-xl ${
+                  'participation_type' in selectedReg
+                    ? 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
+                    : 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
+                }`}>
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-mono text-xs font-bold text-cyan-500">{selectedReg.id}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      {'participation_type' in selectedReg ? 'Idea2Odishi 2026' : 'Code Arena 2.0'}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
+                    {selectedReg.name}
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedReg(null)}
+                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 text-xs">
+              {/* Primary Details Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Roll Number</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">{selectedReg.roll}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Academic Year</span>
+                  <span className="font-bold text-amber-500">{selectedReg.year}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Stream &amp; Branch</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">{selectedReg.stream_branch}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Contact Phone</span>
+                  <a href={`tel:${selectedReg.phone}`} className="font-mono font-bold text-cyan-500 hover:underline">
+                    {selectedReg.phone}
+                  </a>
+                </div>
+                {'email' in selectedReg && (
+                  <div className="sm:col-span-2">
+                    <span className="text-slate-400 block text-[11px]">Email Address</span>
+                    <a href={`mailto:${selectedReg.email}`} className="font-medium text-cyan-500 hover:underline">
+                      {selectedReg.email}
+                    </a>
+                  </div>
+                )}
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Registration Date &amp; Time</span>
+                  <span className="text-slate-700 dark:text-slate-300 font-mono">
+                    {selectedReg.submitted_at ? new Date(selectedReg.submitted_at).toLocaleString('en-IN') : 'N/A'}
+                  </span>
+                </div>
+                {'participation_type' in selectedReg && (
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">Participation Mode</span>
+                    <span className="font-bold text-purple-400">{selectedReg.participation_type}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Team Member 2 Section if applicable */}
+              {'member2_name' in selectedReg && selectedReg.member2_name && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-1.5">
+                    <Users className="w-4 h-4 text-purple-400" />
+                    <span>Team Partner Details (Member 2)</span>
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-purple-500/5 border border-purple-500/20">
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Member Name</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{selectedReg.member2_name}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Roll Number</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedReg.member2_roll}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Stream &amp; Branch</span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200">{selectedReg.member2_stream_branch}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Academic Year</span>
+                      <span className="font-bold text-amber-500">{selectedReg.member2_year}</span>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <span className="text-slate-400 block text-[11px]">Contact Phone</span>
+                      <a href={`tel:${selectedReg.member2_phone}`} className="font-mono font-bold text-purple-400 hover:underline">
+                        {selectedReg.member2_phone}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Problem Statement Section if Idea2Odishi */}
+              {'problem_statement' in selectedReg && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                    Problem Statement &amp; Solution Details
+                  </h4>
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 whitespace-pre-wrap leading-relaxed text-slate-700 dark:text-slate-300 max-h-60 overflow-y-auto">
+                    {selectedReg.problem_statement}
+                  </div>
+                </div>
+              )}
+
+              {/* PPT URL Link if provided */}
+              {'ppt_url' in selectedReg && selectedReg.ppt_url && (
+                <div className="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-between gap-3">
+                  <div className="truncate">
+                    <span className="text-[11px] font-bold text-purple-400 block">Submitted Pitch Deck</span>
+                    <a
+                      href={selectedReg.ppt_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-mono text-cyan-400 hover:underline truncate block"
+                    >
+                      {selectedReg.ppt_url}
+                    </a>
+                  </div>
+                  <a
+                    href={selectedReg.ppt_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shrink-0 flex items-center space-x-1"
+                  >
+                    <span>Open PPT</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(selectedReg, null, 2));
+                  const dl = document.createElement('a');
+                  dl.setAttribute('href', dataStr);
+                  dl.setAttribute('download', `${selectedReg.id}_Registration.json`);
+                  document.body.appendChild(dl);
+                  dl.click();
+                  document.body.removeChild(dl);
+                }}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export JSON</span>
+              </button>
+
+              <button
+                onClick={() => setSelectedReg(null)}
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
       {activeTab === 'achievements' && (
