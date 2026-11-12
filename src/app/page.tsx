@@ -285,14 +285,6 @@ export default function HomePage() {
                   className="object-contain transition-transform duration-700 group-hover:scale-[1.01]"
                   priority
                 />
-
-                <Link
-                  href="/sankalp"
-                  className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900/85 hover:bg-slate-800 text-white backdrop-blur-md border border-slate-700/60 shadow-lg flex items-center space-x-1.5 transition-all opacity-85 hover:opacity-100 cursor-pointer"
-                >
-                  <span>Fest Portal</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
-                </Link>
               </div>
             </div>
 

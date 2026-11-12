@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import SafeImage from '@/components/SafeImage';
 import { ClubEvent, SankalpEvent } from '@/types';
-import { Calendar, MapPin, ExternalLink, Trophy, X, Maximize2 } from 'lucide-react';
+import { Calendar, MapPin, ExternalLink, Trophy, X } from 'lucide-react';
 import { formatExternalUrl } from '@/lib/urlUtils';
 
 interface EventCardProps {
@@ -184,20 +184,6 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
                   className="drop-shadow-2xl"
                 />
               </div>
-
-              {/* View Full Poster button */}
-              {event.image && (
-                <a
-                  href={event.image}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute bottom-3 right-3 z-20 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900/85 hover:bg-slate-800 text-white backdrop-blur-md border border-slate-700/60 shadow-lg flex items-center space-x-1.5 transition-all opacity-90 hover:opacity-100 cursor-pointer"
-                  title="View poster in full resolution"
-                >
-                  <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Full Poster</span>
-                </a>
-              )}
             </div>
 
             <div className="p-6 overflow-y-auto space-y-4">
