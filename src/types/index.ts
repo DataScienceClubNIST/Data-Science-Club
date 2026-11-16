@@ -125,7 +125,7 @@ export interface AdminUser {
   role: AdminRole;
 }
 
-export type EligibleYear = '1st Year' | '2nd Year';
+export type EligibleYear = '1st Year' | '2nd Year' | '3rd Year' | '4th Year' | 'MCA / PG' | 'Other' | string;
 
 export interface TeamMemberDetail {
   id?: string;
@@ -151,8 +151,14 @@ export interface Idea2OdishiRegistration {
   leader_stream_branch?: string;
   leader_year?: EligibleYear;
 
-  // Dynamic Team Members (1 to 4 members total)
+  // Team Member 2 (1 or 2 members total)
   team_members?: TeamMemberDetail[];
+  member2_name?: string;
+  member2_email?: string;
+  member2_roll?: string;
+  member2_stream_branch?: string;
+  member2_year?: EligibleYear;
+  member2_phone?: string;
 
   // Idea Information
   idea_title?: string;
@@ -161,10 +167,16 @@ export interface Idea2OdishiRegistration {
   proposed_solution?: string;
   short_description?: string;
 
-  // Final PPT Upload
+  // Google Drive PPT Upload
+  drive_uploaded?: boolean;
+  drive_file_name?: string;
+  drive_folder_url?: string;
   ppt_filename?: string;
   ppt_url?: string;
   ppt_filesize?: number;
+
+  // WhatsApp Group Confirmation
+  whatsapp_joined?: boolean;
 
   // Legacy / Backward Compatibility fields:
   name?: string;
@@ -172,11 +184,6 @@ export interface Idea2OdishiRegistration {
   stream_branch?: string;
   year?: EligibleYear;
   phone?: string;
-  member2_name?: string;
-  member2_roll?: string;
-  member2_stream_branch?: string;
-  member2_year?: EligibleYear;
-  member2_phone?: string;
 }
 
 export interface CodeArenaRegistration {

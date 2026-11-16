@@ -54,6 +54,11 @@ export default function CodeArenaRegistrationPage() {
     return cleaned.length === 10 && /^[6-9]\d{9}$/.test(cleaned);
   };
 
+  const validateRoll = (num: string) => {
+    const cleaned = num.trim().replace(/\D/g, '');
+    return cleaned.length === 9 && /^\d{9}$/.test(cleaned);
+  };
+
   const validateEmail = (mail: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.trim());
   };
@@ -68,9 +73,9 @@ export default function CodeArenaRegistrationPage() {
       return;
     }
 
-    // Field 2: Roll number validation
-    if (!roll.trim()) {
-      setErrorMessage('Please enter your NIST Roll Number.');
+    // Field 2: Roll number validation (must be 9 digits)
+    if (!validateRoll(roll)) {
+      setErrorMessage('Roll Number must be exactly 9 digits (e.g. 240120110).');
       return;
     }
 
@@ -272,14 +277,15 @@ export default function CodeArenaRegistrationPage() {
             {/* FIELD 2: ROLL */}
             <div>
               <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
-                2. NIST Roll Number *
+                2. NIST Roll Number (9 digits) *
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. 2401201102"
+                maxLength={9}
+                placeholder="e.g. 240120110 (9 digits)"
                 value={roll}
-                onChange={(e) => setRoll(e.target.value)}
+                onChange={(e) => setRoll(e.target.value.replace(/\D/g, '').slice(0, 9))}
                 className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-cyan-500 text-slate-900 dark:text-white uppercase font-mono"
               />
             </div>

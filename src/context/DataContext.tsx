@@ -312,11 +312,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   // Auth actions
   const loginAdmin = (username: string, passcode: string) => {
-    if (username.trim() === 'DSCPresident' && passcode.trim() === 'DSCPresident@1') {
+    if (username.trim() === 'DataScienceClubNIST' && passcode.trim() === 'DataScienceClubPresident') {
       const user: AdminUser = {
         id: `admin-president`,
         name: `Club President`,
-        email: `dscpresident@nist.edu`,
+        email: `datascienceclub@nist.edu`,
         role: 'Club President'
       };
       setAdminUser(user);

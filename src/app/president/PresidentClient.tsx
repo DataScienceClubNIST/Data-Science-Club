@@ -104,7 +104,7 @@ export default function PresidentPage() {
   };
 
   // Login form state
-  const [presidentId, setPresidentId] = useState('DSCPresident');
+  const [presidentId, setPresidentId] = useState('');
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState('');
 
@@ -179,6 +179,8 @@ export default function PresidentPage() {
       'Problem Statement',
       'Proposed Solution',
       'Short Description',
+      'Google Drive Deck Name',
+      'WhatsApp Joined',
       'Pitch PPT Deck Link',
       'Registration Timestamp'
     ];
@@ -209,7 +211,9 @@ export default function PresidentPage() {
         `"${(r.problem_statement || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
         `"${(r.proposed_solution || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
         `"${(r.short_description || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
-        `"${(r.ppt_url || '').replace(/"/g, '""')}"`,
+        `"${(r.drive_file_name || r.ppt_filename || '').replace(/"/g, '""')}"`,
+        `"${r.whatsapp_joined ? 'Yes' : 'No'}"`,
+        `"${(r.ppt_url || 'https://drive.google.com/drive/folders/1PFt_IxM8DFoSoRBNBlpPwwx5iw0Ekgky?usp=sharing').replace(/"/g, '""')}"`,
         `"${r.submitted_at ? new Date(r.submitted_at).toLocaleString('en-IN') : ''}"`
       ];
     });
@@ -341,7 +345,7 @@ export default function PresidentPage() {
     setLoginError('');
     const success = loginAdmin(presidentId, passcode);
     if (!success) {
-      setLoginError('Invalid Credentials! President ID: DSCPresident | Passcode: DSCPresident@1');
+      setLoginError('Invalid User ID or Password. Access denied.');
     }
   };
 
@@ -568,12 +572,12 @@ export default function PresidentPage() {
             <div>
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 block flex items-center space-x-1.5">
                 <User className="w-3.5 h-3.5 text-cyan-500" />
-                <span>President ID *</span>
+                <span>User ID *</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="Enter President ID"
+                placeholder="Enter User ID"
                 value={presidentId}
                 onChange={(e) => setPresidentId(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500"
@@ -1442,27 +1446,29 @@ export default function PresidentPage() {
                 </div>
               )}
 
-              {/* PPT URL Link if provided */}
-              {'ppt_url' in selectedReg && selectedReg.ppt_url && (
+              {/* PPT URL Link or Google Drive Link */}
+              {('ppt_url' in selectedReg || 'drive_file_name' in selectedReg) && (
                 <div className="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-between gap-3">
                   <div className="truncate">
-                    <span className="text-[11px] font-bold text-purple-400 block">Submitted Pitch Deck</span>
+                    <span className="text-[11px] font-bold text-purple-400 block">
+                      Submitted Pitch Deck {selectedReg.drive_file_name ? `(${selectedReg.drive_file_name})` : ''}
+                    </span>
                     <a
-                      href={selectedReg.ppt_url}
+                      href={selectedReg.ppt_url || 'https://drive.google.com/drive/folders/1PFt_IxM8DFoSoRBNBlpPwwx5iw0Ekgky?usp=sharing'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-mono text-cyan-400 hover:underline truncate block"
                     >
-                      {selectedReg.ppt_url}
+                      {selectedReg.ppt_url || 'https://drive.google.com/drive/folders/1PFt_IxM8DFoSoRBNBlpPwwx5iw0Ekgky?usp=sharing'}
                     </a>
                   </div>
                   <a
-                    href={selectedReg.ppt_url}
+                    href={selectedReg.ppt_url || 'https://drive.google.com/drive/folders/1PFt_IxM8DFoSoRBNBlpPwwx5iw0Ekgky?usp=sharing'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shrink-0 flex items-center space-x-1"
                   >
-                    <span>Open PPT</span>
+                    <span>Open Link</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>

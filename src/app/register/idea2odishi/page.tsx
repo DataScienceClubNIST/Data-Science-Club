@@ -4,18 +4,19 @@ import { createPageMetadata } from '@/lib/seo';
 import { generateBreadcrumbSchema, generateEventSchema } from '@/lib/schema';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Register for Idea2Odishi 2026 | Data Science Club, NIST University',
+  title: 'Idea2Odishi 2026 | State-Level Ideathon & Product Building Clash | Sankalp NIST',
   description:
-    'Online registration for Idea2Odishi 2026 at Sankalp Tech Fest, NIST University. Pitch your AI and tech innovation solving Odisha state challenges. Solo or 2-member teams.',
+    'Official portal for Idea2Odishi 2026 at Sankalp Tech Fest, NIST University. 26 Nov: Idea Presentation | 27 Nov: Product Building. Solving problem statements regarding Odisha in any domain. Open to all students (Team size 1 or 2 members).',
   path: '/register/idea2odishi',
   keywords: [
-    'Idea2Odishi Registration',
     'Idea2Odishi 2026',
-    'Sankalp 2026 Registration',
+    'Idea2Odishi Registration',
+    'Sankalp 2026',
+    'Odisha Ideathon',
+    'Product Building Clash',
     'Data Science Club NIST',
     'DSC NIST',
     'NIST University Tech Fest',
-    'Innovation Challenge Odisha',
   ],
 });
 
