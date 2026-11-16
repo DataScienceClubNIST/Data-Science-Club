@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import SafeImage from '@/components/SafeImage';
 import { useData } from '@/context/DataContext';
 import { EligibleYear, TeamMemberDetail } from '@/types';
 import {
@@ -30,7 +29,6 @@ import {
   Cpu,
   Award,
   Layers,
-  ChevronDown,
   Trophy
 } from 'lucide-react';
 
@@ -121,29 +119,29 @@ const CATEGORIES = [
   }
 ];
 
-const VOXEL_GALLERY = [
+const VOXEL_BACKGROUNDS = [
   {
     id: 1,
     title: 'Konark Riverside Splendour',
-    caption: 'Voxel Konark Sun Temple & sacred stone wheel',
+    caption: 'Konark Sun Temple & sacred stone wheel',
     src: '/images/Idea2Odishi_images/Voxel Konark Temple by the Riverside-1.png'
   },
   {
     id: 2,
     title: 'Heritage in Voxel Splendour',
-    caption: 'Puri Ratha Chariot, Lord Jagannath & Saura wall art',
+    caption: 'Puri Ratha Chariot, Lord Jagannath & Saura art',
     src: '/images/Idea2Odishi_images/Odisha Heritage in Voxel Splendour-2.png'
   },
   {
     id: 3,
     title: 'Chilika Lagoon Sanctuary',
-    caption: 'Voxel village boats, flamingos & Kalijai waters',
+    caption: 'Chilika village boats, flamingos & Kalijai waters',
     src: '/images/Idea2Odishi_images/Chilika Lagoon Voxel Village-3.png'
   },
   {
     id: 4,
     title: 'Odisha Heritage Meets Future',
-    caption: 'Smart voxel cyber city, skybridges & Konark portal',
+    caption: 'Smart cyber city, skybridges & Konark portal',
     src: '/images/Idea2Odishi_images/Odisha Heritage Meets Voxel Future-4.png'
   }
 ];
@@ -152,8 +150,15 @@ export default function Idea2OdishiClient() {
   const { submitIdea2OdishiRegistration } = useData();
   const registerSectionRef = useRef<HTMLDivElement>(null);
 
-  // Background scene index (0-3)
-  const [activeVoxelIndex, setActiveVoxelIndex] = useState(0);
+  // Background scene index (0-3) with automatic slow ambient rotation
+  const [activeBgIndex, setActiveBgIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveBgIndex((prev) => (prev + 1) % VOXEL_BACKGROUNDS.length);
+    }, 12000); // changes ambient background every 12s
+    return () => clearInterval(timer);
+  }, []);
 
   // Form State: 1 (Team 1 or 2), 2 (Idea), 3 (Drive PPT), 4 (WhatsApp & Finalize), 5 (Success)
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -432,13 +437,41 @@ export default function Idea2OdishiClient() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-amber-500 selection:text-slate-950">
       
-      {/* IMMERSIVE FIXED VOXEL BACKGROUND WITH SOFT AMBIENT GLOW */}
+      {/* ============================================================== */}
+      {/* IMMERSIVE FULL-PAGE VOXEL BACKGROUND (From provided artworks)  */}
+      {/* ============================================================== */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-30 transition-all duration-1000"
-          style={{ backgroundImage: `url("${VOXEL_GALLERY[activeVoxelIndex].src}")` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/85 to-slate-950" />
+        {VOXEL_BACKGROUNDS.map((bg, idx) => (
+          <div
+            key={bg.id}
+            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
+              activeBgIndex === idx ? 'opacity-35' : 'opacity-0'
+            }`}
+            style={{ backgroundImage: `url("${bg.src}")` }}
+          />
+        ))}
+        {/* Soft vignette gradient so text is always high-contrast and crystal clear */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/90 to-slate-950" />
+      </div>
+
+      {/* FLOATING AMBIENT SCENE CONTROLLER (Bottom Right) */}
+      <div className="fixed bottom-4 right-4 z-40 hidden sm:flex items-center space-x-2 bg-slate-950/85 backdrop-blur-md border border-amber-500/30 px-3 py-1.5 rounded-full text-[11px] text-slate-300 shadow-xl">
+        <span className="font-mono text-amber-400 font-bold">Theme:</span>
+        <span className="truncate max-w-[160px] text-white">{VOXEL_BACKGROUNDS[activeBgIndex].title}</span>
+        <div className="flex items-center space-x-1 pl-1">
+          {VOXEL_BACKGROUNDS.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveBgIndex(idx)}
+              className={`w-2.5 h-2.5 rounded-sm transition-all cursor-pointer ${
+                activeBgIndex === idx
+                  ? 'bg-amber-400 scale-125'
+                  : 'bg-slate-700 hover:bg-slate-500'
+              }`}
+              title={`Switch to ${VOXEL_BACKGROUNDS[idx].title}`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* TOP FLOATING NAVIGATION BAR */}
@@ -465,16 +498,12 @@ export default function Idea2OdishiClient() {
             </div>
           </div>
 
-          {/* Quick Anchor Links */}
-          <nav className="hidden lg:flex items-center space-x-6 text-xs font-semibold text-slate-300">
+          {/* Clean Anchor Navigation (No direct Drive or WhatsApp links) */}
+          <nav className="hidden md:flex items-center space-x-6 text-xs font-semibold text-slate-300">
             <a href="#about" className="hover:text-amber-400 transition-colors">About</a>
             <a href="#schedule" className="hover:text-amber-400 transition-colors">2-Day Schedule</a>
             <a href="#domains" className="hover:text-amber-400 transition-colors">Odisha Domains</a>
-            <a href="#submission" className="hover:text-amber-400 transition-colors">Drive Submission</a>
-            <a href={WHATSAPP_GROUP_URL} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1">
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp Group</span>
-            </a>
+            <a href="#register" className="hover:text-amber-400 transition-colors">Registration</a>
           </nav>
 
           {/* Action Button */}
@@ -489,171 +518,109 @@ export default function Idea2OdishiClient() {
         </div>
       </header>
 
-      {/* HERO SECTION WITH VOXEL BACKGROUND SHOWCASE */}
-      <section className="relative z-10 py-12 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-amber-500/20">
-        <div className="max-w-6xl mx-auto space-y-10">
+      {/* ============================================================== */}
+      {/* HERO SECTION (Transparent Glass Banner Over Voxel Background) */}
+      {/* ============================================================== */}
+      <section id="about" className="relative z-10 py-12 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-amber-500/20">
+        <div className="max-w-5xl mx-auto space-y-10">
           
-          {/* Main Hero Card */}
-          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/40 bg-slate-900/90 shadow-2xl backdrop-blur-md">
+          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/40 bg-slate-900/85 p-6 sm:p-12 shadow-2xl backdrop-blur-md space-y-8">
             
-            {/* Voxel Artwork Viewer Container */}
-            <div className="relative w-full aspect-[21/9] sm:aspect-[2.5/1] max-h-[460px] overflow-hidden bg-slate-950">
-              <SafeImage
-                src={VOXEL_GALLERY[activeVoxelIndex].src}
-                alt={VOXEL_GALLERY[activeVoxelIndex].title}
-                fill
-                fit="cover"
-                priority
-                className="transition-all duration-700 brightness-95 contrast-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent pointer-events-none" />
-
-              {/* Voxel Scene Label */}
-              <div className="absolute bottom-4 left-4 right-4 sm:right-auto z-10 flex items-center space-x-2 bg-slate-950/85 backdrop-blur-md border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs text-amber-300">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="font-bold">{VOXEL_GALLERY[activeVoxelIndex].title}</span>
-                <span className="text-slate-400">•</span>
-                <span className="text-slate-300 text-[11px] truncate">{VOXEL_GALLERY[activeVoxelIndex].caption}</span>
-              </div>
-
-              {/* Voxel Scene Switcher Dots */}
-              <div className="absolute top-4 right-4 z-10 flex items-center space-x-1.5 bg-slate-950/85 backdrop-blur-md border border-amber-500/30 px-3 py-1.5 rounded-full">
-                <span className="text-[10px] text-slate-300 font-mono uppercase mr-1">Voxel View:</span>
-                {VOXEL_GALLERY.map((g, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveVoxelIndex(idx)}
-                    className={`w-3 h-3 rounded-sm transition-all cursor-pointer ${
-                      activeVoxelIndex === idx
-                        ? 'bg-amber-400 ring-2 ring-amber-300 scale-125'
-                        : 'bg-slate-700 hover:bg-slate-500'
-                    }`}
-                    title={g.title}
-                    aria-label={`View ${g.title}`}
-                  />
-                ))}
-              </div>
+            {/* Top Badges */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3.5 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-md">
+                State-Level Innovation Clash
+              </span>
+              <span className="px-3.5 py-1 rounded-md text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                Eligibility: ALL ARE ELIGIBLE
+              </span>
+              <span className="px-3.5 py-1 rounded-md text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                Team Size: 1 or 2 Members
+              </span>
+              <span className="px-3.5 py-1 rounded-md text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                Sankalp 2026 Tech Fest
+              </span>
             </div>
 
-            {/* Hero Information Body */}
-            <div className="p-6 sm:p-10 space-y-6 bg-gradient-to-b from-slate-900 to-slate-950">
+            {/* Title & Tagline */}
+            <div className="space-y-3">
+              <h1 className="text-3xl sm:text-6xl font-black tracking-tight text-white">
+                IDEA2ODISHI <span className="text-amber-400 font-mono">2026</span>
+              </h1>
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
+                A flagship state-level ideathon and product building clash dedicated to solving <strong>real problem statements regarding Odisha across any domain</strong>. Present your visionary pitch on Day 1, build your working prototype on Day 2, and compete for incubation and cash awards.
+              </p>
+            </div>
+
+            {/* Two-Day Format Highlight Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3.5 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-md">
-                  State-Level Innovation Clash
-                </span>
-                <span className="px-3.5 py-1 rounded-md text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                  Eligibility: ALL ARE ELIGIBLE
-                </span>
-                <span className="px-3.5 py-1 rounded-md text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
-                  Team Size: 1 or 2 Members
-                </span>
-                <span className="px-3.5 py-1 rounded-md text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                  Sankalp 2026 Tech Fest
-                </span>
-              </div>
-
-              {/* Title & Tagline */}
-              <div className="space-y-3">
-                <h1 className="text-3xl sm:text-6xl font-black tracking-tight text-white">
-                  IDEA2ODISHI <span className="text-amber-400 font-mono">2026</span>
-                </h1>
-                <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
-                  A premier state-level ideathon and product building clash dedicated to solving <strong>real problem statements regarding Odisha across any domain</strong>. Present your visionary pitch on Day 1, build your working prototype on Day 2, and compete for incubation and cash awards.
-                </p>
-              </div>
-
-              {/* Two-Day Format Highlight Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                
-                {/* Day 1 Card */}
-                <div className="p-5 rounded-2xl bg-slate-900/90 border-2 border-amber-500/30 flex items-start space-x-4 shadow-lg">
-                  <div className="p-3 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
-                    <Calendar className="w-6 h-6" />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-amber-400 font-mono font-bold text-xs uppercase tracking-wider">Day 1</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">26 Nov 2026</span>
-                    </div>
-                    <h3 className="text-base font-extrabold text-white">Idea Presentation</h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      Pitch clash before industry judges and jury. Present your deck addressing key Odisha bottlenecks and technical feasibility.
-                    </p>
-                  </div>
+              {/* Day 1 Card */}
+              <div className="p-5 rounded-2xl bg-slate-950/80 border-2 border-amber-500/30 flex items-start space-x-4 shadow-lg">
+                <div className="p-3 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
+                  <Calendar className="w-6 h-6" />
                 </div>
-
-                {/* Day 2 Card */}
-                <div className="p-5 rounded-2xl bg-slate-900/90 border-2 border-cyan-500/30 flex items-start space-x-4 shadow-lg">
-                  <div className="p-3 rounded-xl bg-cyan-500/20 text-cyan-400 shrink-0">
-                    <Cpu className="w-6 h-6" />
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-amber-400 font-mono font-bold text-xs uppercase tracking-wider">Day 1</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">26 Nov 2026</span>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-cyan-400 font-mono font-bold text-xs uppercase tracking-wider">Day 2</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">27 Nov 2026</span>
-                    </div>
-                    <h3 className="text-base font-extrabold text-white">Product Building</h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      Hands-on rapid MVP development, mentor feedback, working prototype demonstrations, and grand award ceremony.
-                    </p>
-                  </div>
+                  <h3 className="text-base font-extrabold text-white">Idea Presentation</h3>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Pitch clash before industry judges and jury panel. Present your deck addressing key Odisha bottlenecks and technical feasibility.
+                  </p>
                 </div>
-
               </div>
 
-              {/* Action Buttons Row */}
-              <div className="pt-4 flex flex-wrap items-center gap-3">
-                <button
-                  onClick={scrollToRegister}
-                  className="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 shadow-xl flex items-center space-x-2 cursor-pointer"
-                >
-                  <span>Start Team Registration (1 or 2 Members)</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <a
-                  href={PPT_TEMPLATE_URL}
-                  download="Idea2Odishi_Proposed_Template.pptx"
-                  className="px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors flex items-center space-x-2 border border-slate-700"
-                >
-                  <Download className="w-4 h-4 text-amber-400" />
-                  <span>Download Proposed PPT Template</span>
-                </a>
-
-                <a
-                  href={GOOGLE_DRIVE_FOLDER_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-3.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/40 font-bold text-xs transition-colors flex items-center space-x-2"
-                >
-                  <FolderUp className="w-4 h-4" />
-                  <span>Google Drive Upload Folder</span>
-                  <ExternalLink className="w-3 h-3 opacity-60" />
-                </a>
-
-                <a
-                  href={WHATSAPP_GROUP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-3.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-bold text-xs transition-colors flex items-center space-x-2"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Join WhatsApp Group</span>
-                  <ExternalLink className="w-3 h-3 opacity-60" />
-                </a>
+              {/* Day 2 Card */}
+              <div className="p-5 rounded-2xl bg-slate-950/80 border-2 border-cyan-500/30 flex items-start space-x-4 shadow-lg">
+                <div className="p-3 rounded-xl bg-cyan-500/20 text-cyan-400 shrink-0">
+                  <Cpu className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-cyan-400 font-mono font-bold text-xs uppercase tracking-wider">Day 2</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">27 Nov 2026</span>
+                  </div>
+                  <h3 className="text-base font-extrabold text-white">Product Building</h3>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Hands-on rapid MVP development, mentor check-ins, working prototype demonstrations, and grand award ceremony.
+                  </p>
+                </div>
               </div>
 
             </div>
+
+            {/* Action Buttons Row (Drive & WhatsApp links are NOT shown here; only shown step by step) */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                onClick={scrollToRegister}
+                className="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 shadow-xl flex items-center space-x-2 cursor-pointer"
+              >
+                <span>Register Your Team (1 or 2 Members)</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <a
+                href={PPT_TEMPLATE_URL}
+                download="Idea2Odishi_Proposed_Template.pptx"
+                className="px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors flex items-center space-x-2 border border-slate-700"
+              >
+                <Download className="w-4 h-4 text-amber-400" />
+                <span>Download Proposed PPT Template</span>
+              </a>
+            </div>
+
           </div>
 
         </div>
       </section>
 
+      {/* ============================================================== */}
       {/* SECTION: TWO-DAY SCHEDULE & FORMAT */}
+      {/* ============================================================== */}
       <section id="schedule" className="relative z-10 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800/80">
-        <div className="max-w-6xl mx-auto space-y-10">
+        <div className="max-w-5xl mx-auto space-y-10">
           
           <div className="text-center space-y-2">
             <span className="text-amber-400 font-mono text-xs font-bold uppercase tracking-widest">
@@ -683,7 +650,7 @@ export default function Idea2OdishiClient() {
               </h3>
 
               <p className="text-xs text-slate-300 leading-relaxed">
-                Teams pitch their decks to the evaluation panel. Presentation slides must be submitted via Google Drive in format <strong>Idea2Odishi_TeamName</strong>.
+                Teams pitch their decks to the evaluation panel. Presentation slides must be submitted in the designated Google Drive folder during Step 3 of registration in format <strong>Idea2Odishi_TeamName</strong>.
               </p>
 
               <div className="space-y-2 pt-2 text-xs">
@@ -740,9 +707,11 @@ export default function Idea2OdishiClient() {
         </div>
       </section>
 
+      {/* ============================================================== */}
       {/* SECTION: ODISHA FOCUS DOMAINS (ANY DOMAIN ELIGIBLE) */}
+      {/* ============================================================== */}
       <section id="domains" className="relative z-10 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800/80">
-        <div className="max-w-6xl mx-auto space-y-10">
+        <div className="max-w-5xl mx-auto space-y-10">
           
           <div className="text-center space-y-2">
             <span className="text-amber-400 font-mono text-xs font-bold uppercase tracking-widest">
@@ -775,73 +744,6 @@ export default function Idea2OdishiClient() {
                 </div>
               </div>
             ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* SECTION: PPT GUIDELINES & GOOGLE DRIVE SUBMISSION */}
-      <section id="submission" className="relative z-10 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800/80">
-        <div className="max-w-6xl mx-auto space-y-10">
-          
-          <div className="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950/40 border-2 border-amber-500/40 shadow-2xl space-y-6">
-            
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-              <div>
-                <span className="text-amber-400 font-mono text-xs font-bold uppercase tracking-wider">
-                  SUBMISSION PROTOCOL
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-                  Google Drive Presentation Submission
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-                  All presentations must be formatted using the official proposed template and uploaded into the designated Google Drive folder.
-                </p>
-              </div>
-
-              <a
-                href={GOOGLE_DRIVE_FOLDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center space-x-2 shrink-0 transition-colors shadow-lg"
-              >
-                <FolderUp className="w-4 h-4" />
-                <span>Open Google Drive Folder</span>
-                <ExternalLink className="w-3.5 h-3.5 opacity-70" />
-              </a>
-            </div>
-
-            {/* Required Naming Protocol Box */}
-            <div className="p-5 rounded-2xl bg-amber-500/10 border-2 border-amber-500/40 text-amber-200 space-y-2">
-              <div className="flex items-center space-x-2 font-bold text-sm text-amber-300">
-                <AlertCircle className="w-4 h-4 text-amber-400" />
-                <span>Required File Naming Format:</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-950 border border-amber-500/30 font-mono text-xs text-white">
-                Idea2Odishi_<span className="text-amber-400 font-bold">TeamName</span>.pptx
-              </div>
-              <p className="text-xs text-slate-300">
-                Example: If your team name is <strong>AgriChakshu</strong>, your uploaded PowerPoint file must be named <strong>Idea2Odishi_AgriChakshu.pptx</strong>.
-              </p>
-            </div>
-
-            {/* Template Download Prompt */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <div className="flex items-center space-x-3 text-xs text-slate-300">
-                <FileText className="w-5 h-5 text-amber-400 shrink-0" />
-                <span>Download the updated official Proposed Pitch Deck Template:</span>
-              </div>
-
-              <a
-                href={PPT_TEMPLATE_URL}
-                download="Idea2Odishi_Proposed_Template.pptx"
-                className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center space-x-1.5 transition-colors shrink-0"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Download Template (.pptx)</span>
-              </a>
-            </div>
-
           </div>
 
         </div>
@@ -1391,7 +1293,7 @@ export default function Idea2OdishiClient() {
                 </div>
               </div>
 
-              {/* Primary Drive Button */}
+              {/* Primary Drive Button (Revealed exclusively in Step 3) */}
               <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-950/40 via-slate-950 to-blue-950/30 border-2 border-blue-500/40 text-center space-y-4">
                 <div className="space-y-1">
                   <h4 className="text-base font-extrabold text-white">
@@ -1406,7 +1308,7 @@ export default function Idea2OdishiClient() {
                   href={GOOGLE_DRIVE_FOLDER_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2.5 px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all shadow-xl"
+                  className="inline-flex items-center space-x-2.5 px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all shadow-xl cursor-pointer"
                 >
                   <FolderUp className="w-5 h-5" />
                   <span>Click to Open Submission Google Drive Folder</span>
@@ -1495,7 +1397,7 @@ export default function Idea2OdishiClient() {
                 </p>
               </div>
 
-              {/* WHATSAPP CARD */}
+              {/* WHATSAPP CARD (Revealed exclusively in Step 4) */}
               <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/50 via-slate-950 to-emerald-950/30 border-2 border-emerald-500/40 space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
@@ -1515,7 +1417,7 @@ export default function Idea2OdishiClient() {
                   href={WHATSAPP_GROUP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center space-x-2 shadow-lg"
+                  className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center space-x-2 shadow-lg cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>Join Official WhatsApp Group Now</span>
@@ -1720,7 +1622,7 @@ export default function Idea2OdishiClient() {
 
                 </div>
 
-                {/* WhatsApp Group Reminder */}
+                {/* WhatsApp Group Reminder on Success Slip */}
                 <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-4 text-xs">
                   <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
                     <MessageCircle className="w-4 h-4 shrink-0 text-emerald-400" />
