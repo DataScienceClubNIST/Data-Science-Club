@@ -362,27 +362,63 @@ export async function POST(req: NextRequest) {
           whatsapp_joined,
         })}`;
 
-        const supabaseRow: Record<string, any> = {
+        // Attempt 1: Insert with full enriched columns (if table has been upgraded)
+        const fullRow: Record<string, any> = {
           id: regId,
           participation_type,
+          team_name,
           name: leader_name,
           roll: leaderRollClean,
+          leader_email,
           stream_branch: leader_stream_branch,
           year: leader_year,
           phone: phoneClean,
+          idea_title,
+          category,
           problem_statement: enrichedProblemStatement,
+          proposed_solution,
+          short_description,
           ppt_url: savedPptUrl,
+          drive_file_name: savedPptFilename,
+          whatsapp_joined,
           member2_name: member2?.name || null,
           member2_roll: member2?.roll || null,
+          member2_email: member2?.email || null,
           member2_stream_branch: member2?.stream_branch || null,
           member2_year: member2?.year || null,
           member2_phone: member2?.phone || null,
           submitted_at,
         };
 
-        const { error } = await supabase.from('idea2odishi_registrations').insert([supabaseRow]);
-        if (error) {
-          console.warn('Supabase insert note (local JSON persisted):', error.message);
+        const { error: fullErr } = await supabase.from('idea2odishi_registrations').insert([fullRow]);
+
+        // Attempt 2: If custom columns do not exist yet in older Supabase schema, insert base columns
+        if (fullErr) {
+          const compatibleYear = (leader_year === '1st Year' || leader_year === '2nd Year') ? leader_year : '1st Year';
+          const compatibleM2Year = (member2?.year === '1st Year' || member2?.year === '2nd Year') ? member2.year : '1st Year';
+
+          const baseRow: Record<string, any> = {
+            id: regId,
+            participation_type,
+            name: leader_name,
+            roll: leaderRollClean,
+            stream_branch: leader_stream_branch,
+            year: compatibleYear,
+            phone: phoneClean,
+            problem_statement: enrichedProblemStatement,
+            ppt_url: savedPptUrl,
+            member2_name: member2?.name || null,
+            member2_roll: member2?.roll || null,
+            member2_stream_branch: member2?.stream_branch || null,
+            member2_year: member2 ? compatibleM2Year : null,
+            member2_phone: member2?.phone || null,
+            submitted_at,
+          };
+
+          const { error: baseErr } = await supabase.from('idea2odishi_registrations').insert([baseRow]);
+          if (baseErr) {
+            console.warn('Supabase base insert note (local JSON persisted):', baseErr.message);
+          }
         }
       } catch (sbErr) {
         console.warn('Supabase insert exception (local JSON persisted):', sbErr);

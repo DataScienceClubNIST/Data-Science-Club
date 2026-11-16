@@ -144,20 +144,45 @@ CREATE TABLE IF NOT EXISTS public.recruitment_applications (
 CREATE TABLE IF NOT EXISTS public.idea2odishi_registrations (
   id TEXT PRIMARY KEY,
   participation_type TEXT NOT NULL CHECK (participation_type IN ('Solo', 'Team')),
+  team_name TEXT,
   name TEXT NOT NULL,
   roll TEXT NOT NULL,
+  leader_email TEXT,
   stream_branch TEXT NOT NULL,
-  year TEXT NOT NULL CHECK (year IN ('1st Year', '2nd Year')),
+  year TEXT NOT NULL, -- All years eligible (1st, 2nd, 3rd, 4th, MCA/PG, etc.)
   phone TEXT NOT NULL,
+  idea_title TEXT,
+  category TEXT,
   problem_statement TEXT NOT NULL,
+  proposed_solution TEXT,
+  short_description TEXT,
   ppt_url TEXT,
+  drive_file_name TEXT,
+  whatsapp_joined BOOLEAN DEFAULT FALSE,
   member2_name TEXT,
   member2_roll TEXT,
+  member2_email TEXT,
   member2_stream_branch TEXT,
   member2_year TEXT,
   member2_phone TEXT,
   submitted_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Ensure check constraint on year is removed if table was created with older schema
+ALTER TABLE public.idea2odishi_registrations 
+  DROP CONSTRAINT IF EXISTS idea2odishi_registrations_year_check;
+
+-- Add any new columns to existing table if already created
+ALTER TABLE public.idea2odishi_registrations 
+  ADD COLUMN IF NOT EXISTS team_name TEXT,
+  ADD COLUMN IF NOT EXISTS leader_email TEXT,
+  ADD COLUMN IF NOT EXISTS idea_title TEXT,
+  ADD COLUMN IF NOT EXISTS category TEXT,
+  ADD COLUMN IF NOT EXISTS proposed_solution TEXT,
+  ADD COLUMN IF NOT EXISTS short_description TEXT,
+  ADD COLUMN IF NOT EXISTS drive_file_name TEXT,
+  ADD COLUMN IF NOT EXISTS whatsapp_joined BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS member2_email TEXT;
 
 -- 11. CODE ARENA 2.0 REGISTRATIONS TABLE
 CREATE TABLE IF NOT EXISTS public.codearena_registrations (
