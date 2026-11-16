@@ -21,7 +21,7 @@ export const SITE_CONFIG = {
   ],
   description:
     'Discover the Data Science Club (DSC) at NIST University. Explore AI, Machine Learning, Data Science, Deep Learning, Web Development, technical events, projects, workshops and student innovations in Berhampur, Odisha.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://datascienceclub-nist.vercel.app',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://data-science-club-nist.vercel.app',
   email: 'data.science.club@nist.edu',
   phone: '+91-94370-00000',
   parentUniversity: {

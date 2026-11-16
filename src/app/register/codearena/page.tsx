@@ -34,8 +34,8 @@ export default function CodeArenaPage() {
     endDate: '2026-03-21T15:00:00+05:30',
     locationName: 'Computer Center, NIST University',
     locationAddress: 'Palur Hills, Berhampur, Odisha 761008',
-    url: 'https://datascienceclub-nist.vercel.app/register/codearena',
-    image: 'https://datascienceclub-nist.vercel.app/images/sankalp_banner.webp',
+    url: 'https://data-science-club-nist.vercel.app/register/codearena',
+    image: 'https://data-science-club-nist.vercel.app/images/sankalp_banner.webp',
   });
 
   return (

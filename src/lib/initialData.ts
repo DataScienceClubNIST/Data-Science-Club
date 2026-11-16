@@ -500,7 +500,7 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Official dynamic web application for Data Science Club at NIST University with dynamic admin content management.',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
     domain: 'Web Development',
-    project_url: 'https://datascienceclub-nist.vercel.app',
+    project_url: 'https://data-science-club-nist.vercel.app',
     github_url: 'https://github.com/nist-dsc/club-website',
     featured: true
   }

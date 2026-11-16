@@ -36,8 +36,8 @@ export default function SankalpPage() {
     endDate: '2026-03-21T17:00:00+05:30',
     locationName: 'NIST University Campus, Palur Hills',
     locationAddress: 'Palur Hills, Berhampur, Odisha 761008',
-    url: 'https://datascienceclub-nist.vercel.app/register/idea2odishi',
-    image: 'https://datascienceclub-nist.vercel.app/images/sankalp_banner.webp',
+    url: 'https://data-science-club-nist.vercel.app/register/idea2odishi',
+    image: 'https://data-science-club-nist.vercel.app/images/sankalp_banner.webp',
   });
 
   const codeArenaSchema = generateEventSchema({
@@ -48,8 +48,8 @@ export default function SankalpPage() {
     endDate: '2026-03-21T15:00:00+05:30',
     locationName: 'Computer Center, NIST University',
     locationAddress: 'Palur Hills, Berhampur, Odisha 761008',
-    url: 'https://datascienceclub-nist.vercel.app/register/codearena',
-    image: 'https://datascienceclub-nist.vercel.app/images/sankalp_banner.webp',
+    url: 'https://data-science-club-nist.vercel.app/register/codearena',
+    image: 'https://data-science-club-nist.vercel.app/images/sankalp_banner.webp',
   });
 
   return (
