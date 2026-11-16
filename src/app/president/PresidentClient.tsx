@@ -40,7 +40,8 @@ import {
   CheckCircle2,
   ExternalLink,
   FileText,
-  Search
+  Search,
+  MessageCircle
 } from 'lucide-react';
 import { ImageUploader } from '@/components/ImageUploader';
 import { formatExternalUrl } from '@/lib/urlUtils';
@@ -1176,6 +1177,17 @@ export default function PresidentPage() {
                   Showing <strong>{filteredCodeArena.length}</strong> of {codeArenaRegistrations.length} registered speed coders
                 </div>
                 <div className="flex items-center space-x-2">
+                  <a
+                    href="https://chat.whatsapp.com/CMwdj0V0V6G714sGJ0zwTl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center space-x-1"
+                    title="Open Code Arena WhatsApp Group"
+                  >
+                    <MessageCircle className="w-3 h-3" />
+                    <span>WhatsApp Group</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
                   <a
                     href="/register/codearena"
                     target="_blank"

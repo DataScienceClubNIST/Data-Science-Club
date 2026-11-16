@@ -16,8 +16,13 @@ import {
   Trophy, 
   ShieldCheck, 
   Printer,
-  ExternalLink
+  ExternalLink,
+  MessageCircle,
+  Copy,
+  Check
 } from 'lucide-react';
+
+const CODEARENA_WHATSAPP_GROUP = 'https://chat.whatsapp.com/CMwdj0V0V6G714sGJ0zwTl';
 
 const COMMON_BRANCHES = [
   'B.Tech - Computer Science & Engineering (CSE)',
@@ -48,6 +53,15 @@ export default function CodeArenaRegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registrationId, setRegistrationId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
+
+  const copyWhatsAppLink = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(CODEARENA_WHATSAPP_GROUP);
+      setCopiedWhatsApp(true);
+      setTimeout(() => setCopiedWhatsApp(false), 2500);
+    }
+  };
 
   const validatePhone = (num: string) => {
     const cleaned = num.trim().replace(/\D/g, '');
@@ -229,6 +243,64 @@ export default function CodeArenaRegistrationPage() {
                 <div><strong className="text-slate-700 dark:text-slate-300">Stream &amp; Branch:</strong> {streamBranch}</div>
                 <div><strong className="text-slate-700 dark:text-slate-300">Phone:</strong> {phone}</div>
                 <div><strong className="text-slate-700 dark:text-slate-300">Email:</strong> {email}</div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center space-x-1.5 font-medium">
+                <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>WhatsApp Group: <strong>chat.whatsapp.com/CMwdj0V0V6G714sGJ0zwTl</strong></span>
+              </div>
+            </div>
+
+            {/* WHATSAPP GROUP CALLOUT - JOIN FOR UPDATES */}
+            <div className="max-w-md mx-auto p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-teal-500/10 border-2 border-emerald-500/40 text-left space-y-4 shadow-xl">
+              <div className="flex items-start space-x-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/30">
+                  <MessageCircle className="w-6 h-6 fill-slate-950" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+                      Join Contest WhatsApp Group
+                    </h3>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                      Essential
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    All contest communications, lab slot allotments, login instructions, problem statements access, and live leaderboard announcements will be shared exclusively in this group.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                <a
+                  href={CODEARENA_WHATSAPP_GROUP}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/30 cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Join WhatsApp Group</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+                <button
+                  type="button"
+                  onClick={copyWhatsAppLink}
+                  className="py-3 px-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700 flex items-center justify-center space-x-1.5 transition-colors cursor-pointer shrink-0"
+                  title="Copy WhatsApp Group Link"
+                >
+                  {copiedWhatsApp ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <span className="text-emerald-500 font-bold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy Link</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
 
