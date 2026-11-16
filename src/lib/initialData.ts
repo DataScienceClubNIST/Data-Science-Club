@@ -217,16 +217,16 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
 export const INITIAL_EVENTS: ClubEvent[] = [
   {
     id: 'evt-2026-idea2odishi',
-    title: 'Idea2Odishi (Ideathon & Pitch Clash)',
+    title: 'Idea2Odishi 2026 (State-Level Ideathon & Pitch Clash)',
     year: 2026,
-    date: 'March 28, 2026',
-    description: 'Flagship ideathon for 1st & 2nd year students at Sankalp Tech Fest. Present game-changing tech and startup solutions for Odisha. Participation is Solo or Team (2 members). Download the official PPT template to prepare your deck.',
-    image: '/images/sankalp_banner.jpg',
+    date: '26–27 November 2026',
+    description: 'Flagship ideathon for innovative thinkers at Sankalp Tech Fest. Present game-changing tech and startup solutions for Odisha. Dynamic teams of 1 to 4 members. Download the official PPT template to prepare your final deck.',
+    image: '/images/Idea2Odishi_images/Voxel Konark Temple by the Riverside-1.png',
     venue: 'NIST Seminar Hall 1 & Auditorium',
     category: 'Competition',
     registration_link: '/register/idea2odishi',
     contest_link: '/templates/Idea2Odishi_Pitch_Template.pptx',
-    result: 'Exclusively for 1st & 2nd Year Students | Cash Prizes + Incubation Support',
+    result: '11:00 AM – 3:30 PM | Cash Prizes + Incubation Support | Odisha Voxel Edition',
     status: 'Register Now'
   },
   {
@@ -345,13 +345,13 @@ export const INITIAL_SANKALP_EVENTS: SankalpEvent[] = [
     id: 'snk-2026-idea2odishi',
     title: 'Sankalp 2026: Idea2Odishi',
     year: 2026,
-    date: 'March 28, 2026',
-    description: 'Flagship ideathon for 1st & 2nd year students at Sankalp Tech Fest. Present game-changing tech and startup solutions for Odisha. Participation is Solo or Team (2 members). Download the official PPT template to prepare your deck.',
-    image: '/images/sankalp_banner.jpg',
+    date: '26–27 November 2026',
+    description: 'Flagship ideathon for innovative thinkers at Sankalp Tech Fest. Present game-changing tech and startup solutions for Odisha. Dynamic teams of 1 to 4 members. Download the official PPT template to prepare your final deck.',
+    image: '/images/Idea2Odishi_images/Voxel Konark Temple by the Riverside-1.png',
     venue: 'NIST Seminar Hall 1 & Auditorium',
     registration_link: '/register/idea2odishi',
     contest_link: '/templates/Idea2Odishi_Pitch_Template.pptx',
-    result: 'Exclusively for 1st & 2nd Year Students | Cash Prizes + Incubation Support',
+    result: '11:00 AM – 3:30 PM | Cash Prizes + Incubation Support | Odisha Voxel Edition',
     status: 'Register Now'
   },
   {

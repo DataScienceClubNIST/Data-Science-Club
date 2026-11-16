@@ -133,6 +133,11 @@ export default function PresidentPage() {
     const q = regSearchQuery.toLowerCase();
     return (
       (r.name && r.name.toLowerCase().includes(q)) ||
+      (r.team_name && r.team_name.toLowerCase().includes(q)) ||
+      (r.leader_name && r.leader_name.toLowerCase().includes(q)) ||
+      (r.leader_email && r.leader_email.toLowerCase().includes(q)) ||
+      (r.idea_title && r.idea_title.toLowerCase().includes(q)) ||
+      (r.category && r.category.toLowerCase().includes(q)) ||
       (r.roll && r.roll.toLowerCase().includes(q)) ||
       (r.phone && r.phone.toLowerCase().includes(q)) ||
       (r.stream_branch && r.stream_branch.toLowerCase().includes(q)) ||
@@ -160,38 +165,54 @@ export default function PresidentPage() {
     if (idea2OdishiRegistrations.length === 0) return;
     const headers = [
       'Registration ID',
+      'Team Name',
       'Participation Type',
+      'Idea Title',
+      'Domain / Category',
       'Lead Participant Name',
       'Lead Roll Number',
+      'Lead Email',
+      'Lead Phone Number',
       'Lead Stream & Branch',
       'Lead Year',
-      'Lead Phone Number',
+      'All Team Members',
       'Problem Statement',
+      'Proposed Solution',
+      'Short Description',
       'Pitch PPT Deck Link',
-      'Member 2 Name',
-      'Member 2 Roll Number',
-      'Member 2 Stream & Branch',
-      'Member 2 Year',
-      'Member 2 Phone Number',
       'Registration Timestamp'
     ];
-    const rows = idea2OdishiRegistrations.map(r => [
-      `"${(r.id || '').replace(/"/g, '""')}"`,
-      `"${(r.participation_type || '').replace(/"/g, '""')}"`,
-      `"${(r.name || '').replace(/"/g, '""')}"`,
-      `"${(r.roll || '').replace(/"/g, '""')}"`,
-      `"${(r.stream_branch || '').replace(/"/g, '""')}"`,
-      `"${(r.year || '').replace(/"/g, '""')}"`,
-      `"${(r.phone || '').replace(/"/g, '""')}"`,
-      `"${(r.problem_statement || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
-      `"${(r.ppt_url || '').replace(/"/g, '""')}"`,
-      `"${(r.member2_name || '').replace(/"/g, '""')}"`,
-      `"${(r.member2_roll || '').replace(/"/g, '""')}"`,
-      `"${(r.member2_stream_branch || '').replace(/"/g, '""')}"`,
-      `"${(r.member2_year || '').replace(/"/g, '""')}"`,
-      `"${(r.member2_phone || '').replace(/"/g, '""')}"`,
-      `"${r.submitted_at ? new Date(r.submitted_at).toLocaleString('en-IN') : ''}"`
-    ]);
+    const rows = idea2OdishiRegistrations.map(r => {
+      // Build team members text summary
+      let membersSummary = '';
+      if (Array.isArray(r.team_members) && r.team_members.length > 0) {
+        membersSummary = r.team_members
+          .map((m, idx) => `[Member ${idx + 2}: ${m.name} (${m.roll}, ${m.stream_branch}, ${m.year}, Ph: ${m.phone})]`)
+          .join('; ');
+      } else if (r.member2_name) {
+        membersSummary = `[Member 2: ${r.member2_name} (${r.member2_roll || ''}, ${r.member2_stream_branch || ''}, ${r.member2_year || ''}, Ph: ${r.member2_phone || ''})]`;
+      }
+
+      return [
+        `"${(r.id || '').replace(/"/g, '""')}"`,
+        `"${(r.team_name || 'Solo').replace(/"/g, '""')}"`,
+        `"${(r.participation_type || '').replace(/"/g, '""')}"`,
+        `"${(r.idea_title || '').replace(/"/g, '""')}"`,
+        `"${(r.category || '').replace(/"/g, '""')}"`,
+        `"${(r.leader_name || r.name || '').replace(/"/g, '""')}"`,
+        `"${(r.leader_roll || r.roll || '').replace(/"/g, '""')}"`,
+        `"${(r.leader_email || '').replace(/"/g, '""')}"`,
+        `"${(r.leader_phone || r.phone || '').replace(/"/g, '""')}"`,
+        `"${(r.leader_stream_branch || r.stream_branch || '').replace(/"/g, '""')}"`,
+        `"${(r.leader_year || r.year || '').replace(/"/g, '""')}"`,
+        `"${membersSummary.replace(/"/g, '""')}"`,
+        `"${(r.problem_statement || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
+        `"${(r.proposed_solution || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
+        `"${(r.short_description || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`,
+        `"${(r.ppt_url || '').replace(/"/g, '""')}"`,
+        `"${r.submitted_at ? new Date(r.submitted_at).toLocaleString('en-IN') : ''}"`
+      ];
+    });
     const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1052,23 +1073,42 @@ export default function PresidentPage() {
                             </span>
                           </td>
                           <td className="p-4">
-                            <div className="font-bold text-slate-900 dark:text-white">{reg.name}</div>
-                            <div className="font-mono text-[11px] text-slate-500">{reg.roll}</div>
+                            <div className="font-bold text-slate-900 dark:text-white">{reg.team_name || reg.name}</div>
+                            <div className="font-mono text-[11px] text-cyan-500 dark:text-cyan-400">
+                              Lead: {reg.leader_name || reg.name} ({reg.leader_roll || reg.roll})
+                            </div>
+                            {reg.leader_email && (
+                              <div className="text-[10px] text-slate-400 truncate">{reg.leader_email}</div>
+                            )}
                           </td>
                           <td className="p-4">
-                            <div>{reg.stream_branch}</div>
-                            <span className="text-[10px] font-bold text-amber-500">{reg.year}</span>
+                            <div>{reg.leader_stream_branch || reg.stream_branch}</div>
+                            <span className="text-[10px] font-bold text-amber-500">{reg.leader_year || reg.year}</span>
+                            {reg.category && (
+                              <div className="text-[10px] font-semibold text-purple-400 mt-0.5">{reg.category}</div>
+                            )}
                           </td>
-                          <td className="p-4 font-mono">{reg.phone}</td>
+                          <td className="p-4 font-mono">{reg.leader_phone || reg.phone}</td>
                           <td className="p-4">
-                            {reg.participation_type === 'Team' && reg.member2_name ? (
+                            {Array.isArray(reg.team_members) && reg.team_members.length > 0 ? (
+                              <div className="space-y-1">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                                  {reg.team_members.length} Additional Member{reg.team_members.length > 1 ? 's' : ''}
+                                </span>
+                                {reg.team_members.map((m: any, mIdx: number) => (
+                                  <div key={mIdx} className="text-[11px] text-slate-300">
+                                    {m.name} ({m.roll})
+                                  </div>
+                                ))}
+                              </div>
+                            ) : reg.participation_type === 'Team' && reg.member2_name ? (
                               <div>
                                 <div className="font-semibold text-slate-900 dark:text-white">{reg.member2_name}</div>
                                 <div className="text-[11px] font-mono text-slate-500">{reg.member2_roll} • {reg.member2_year}</div>
                                 <div className="text-[10px] text-slate-400">{reg.member2_phone}</div>
                               </div>
                             ) : (
-                              <span className="text-slate-400 italic">—</span>
+                              <span className="text-slate-400 italic">Solo</span>
                             )}
                           </td>
                           <td className="p-4 max-w-xs">
@@ -1297,10 +1337,67 @@ export default function PresidentPage() {
                     <span className="font-bold text-purple-400">{selectedReg.participation_type}</span>
                   </div>
                 )}
+                {selectedReg.team_name && (
+                  <div className="sm:col-span-2">
+                    <span className="text-slate-400 block text-[11px]">Team Name</span>
+                    <span className="font-bold text-amber-400 text-sm">{selectedReg.team_name}</span>
+                  </div>
+                )}
+                {selectedReg.leader_email && (
+                  <div className="sm:col-span-2">
+                    <span className="text-slate-400 block text-[11px]">Leader Email Address</span>
+                    <a href={`mailto:${selectedReg.leader_email}`} className="font-medium text-cyan-500 hover:underline">
+                      {selectedReg.leader_email}
+                    </a>
+                  </div>
+                )}
+                {selectedReg.idea_title && (
+                  <div className="sm:col-span-2">
+                    <span className="text-slate-400 block text-[11px]">Idea / Project Title</span>
+                    <span className="font-bold text-emerald-400 text-sm">{selectedReg.idea_title}</span>
+                  </div>
+                )}
+                {selectedReg.category && (
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">Domain / Category</span>
+                    <span className="font-semibold text-cyan-400">{selectedReg.category}</span>
+                  </div>
+                )}
               </div>
 
-              {/* Team Member 2 Section if applicable */}
-              {'member2_name' in selectedReg && selectedReg.member2_name && (
+              {/* Dynamic Team Members Section if present */}
+              {Array.isArray(selectedReg.team_members) && selectedReg.team_members.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-1.5">
+                    <Users className="w-4 h-4 text-purple-400" />
+                    <span>Team Members ({selectedReg.team_members.length})</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedReg.team_members.map((m: any, idx: number) => (
+                      <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-purple-500/5 border border-purple-500/20">
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Member {idx + 2} Name</span>
+                          <span className="font-bold text-slate-900 dark:text-white">{m.name}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Roll &amp; Year</span>
+                          <span className="font-mono font-semibold text-slate-200">{m.roll} ({m.year})</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Stream &amp; Phone</span>
+                          <div className="text-slate-300 truncate">{m.stream_branch}</div>
+                          <a href={`tel:${m.phone}`} className="font-mono text-cyan-400 hover:underline text-[11px]">
+                            {m.phone}
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Team Member 2 Section if legacy team format */}
+              {(!selectedReg.team_members || selectedReg.team_members.length === 0) && 'member2_name' in selectedReg && selectedReg.member2_name && (
                 <div className="space-y-3">
                   <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-1.5">
                     <Users className="w-4 h-4 text-purple-400" />

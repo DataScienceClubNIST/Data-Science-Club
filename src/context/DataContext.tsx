@@ -95,7 +95,7 @@ interface DataContextType {
   // Event Registrations (Idea2Odishi & Code Arena 2.0)
   idea2OdishiRegistrations: Idea2OdishiRegistration[];
   codeArenaRegistrations: CodeArenaRegistration[];
-  submitIdea2OdishiRegistration: (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'>) => Promise<string>;
+  submitIdea2OdishiRegistration: (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'> | Idea2OdishiRegistration) => Promise<string>;
   submitCodeArenaRegistration: (data: Omit<CodeArenaRegistration, 'id' | 'submitted_at'>) => Promise<string>;
   deleteIdea2OdishiRegistration: (id: string) => Promise<void>;
   deleteCodeArenaRegistration: (id: string) => Promise<void>;
@@ -711,6 +711,21 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   // Event Registrations CRUD
   const refreshRegistrations = async () => {
+    // 1. Fetch from local API route first for freshest sequential registrations
+    try {
+      const apiRes = await fetch('/api/register/idea2odishi');
+      if (apiRes.ok) {
+        const json = await apiRes.json();
+        if (json.success && Array.isArray(json.registrations) && json.registrations.length > 0) {
+          setIdea2OdishiRegistrations(json.registrations);
+          saveStorage('dsc_reg_idea2odishi', json.registrations);
+        }
+      }
+    } catch {
+      // offline / sandbox mode
+    }
+
+    // 2. Fetch live records from Supabase Database if configured
     if (isSupabaseConfigured && supabase) {
       try {
         const [
@@ -721,9 +736,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           supabase.from('codearena_registrations').select('*').order('submitted_at', { ascending: false })
         ]);
 
-        if (!i2oErr && i2oData) {
-          setIdea2OdishiRegistrations(i2oData);
-          saveStorage('dsc_reg_idea2odishi', i2oData);
+        if (!i2oErr && i2oData && i2oData.length > 0) {
+          setIdea2OdishiRegistrations(prev => {
+            // merge so enriched fields are not lost
+            const merged = [...prev];
+            for (const row of i2oData) {
+              if (!merged.some(m => m.id === row.id)) {
+                merged.push(row);
+              }
+            }
+            saveStorage('dsc_reg_idea2odishi', merged);
+            return merged;
+          });
         }
         if (!caErr && caData) {
           setCodeArenaRegistrations(caData);
@@ -740,20 +764,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const submitIdea2OdishiRegistration = async (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'>): Promise<string> => {
-    const regId = `I2O-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+  const submitIdea2OdishiRegistration = async (data: Omit<Idea2OdishiRegistration, 'id' | 'submitted_at'> | Idea2OdishiRegistration): Promise<string> => {
+    const regId = 'id' in data && data.id ? data.id : `I2O${Math.floor(100 + Math.random() * 900)}`;
     const newReg: Idea2OdishiRegistration = {
       ...data,
       id: regId,
-      submitted_at: new Date().toISOString()
+      submitted_at: 'submitted_at' in data && data.submitted_at ? data.submitted_at : new Date().toISOString()
     };
-    const updated = [newReg, ...idea2OdishiRegistrations];
+    const updated = [newReg, ...idea2OdishiRegistrations.filter(r => r.id !== regId)];
     setIdea2OdishiRegistrations(updated);
     saveStorage('dsc_reg_idea2odishi', updated);
 
     if (isSupabaseConfigured && supabase) {
       try {
-        const { error } = await supabase.from('idea2odishi_registrations').insert([newReg]);
+        const { error } = await supabase.from('idea2odishi_registrations').upsert([newReg]);
         if (error) {
           console.error('Supabase Idea2Odishi registration error:', error);
         }

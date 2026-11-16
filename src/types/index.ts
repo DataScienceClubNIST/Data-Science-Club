@@ -127,20 +127,51 @@ export interface AdminUser {
 
 export type EligibleYear = '1st Year' | '2nd Year';
 
-export interface Idea2OdishiRegistration {
-  id: string;
-  submitted_at: string;
-  participation_type: 'Solo' | 'Team';
-  // Leader / Solo details
+export interface TeamMemberDetail {
+  id?: string;
   name: string;
+  email?: string;
+  phone: string;
   roll: string;
   stream_branch: string;
   year: EligibleYear;
-  phone: string;
+}
+
+export interface Idea2OdishiRegistration {
+  id: string; // Sequential ID: I2O001, I2O002, etc.
+  submitted_at: string;
+  participation_type: 'Solo' | 'Team';
+
+  // Team & Leader Information
+  team_name?: string;
+  leader_name?: string;
+  leader_email?: string;
+  leader_phone?: string;
+  leader_roll?: string;
+  leader_stream_branch?: string;
+  leader_year?: EligibleYear;
+
+  // Dynamic Team Members (1 to 4 members total)
+  team_members?: TeamMemberDetail[];
+
+  // Idea Information
+  idea_title?: string;
+  category?: string;
   problem_statement: string;
+  proposed_solution?: string;
+  short_description?: string;
+
+  // Final PPT Upload
+  ppt_filename?: string;
   ppt_url?: string;
-  
-  // Team Member (if participation_type === 'Team')
+  ppt_filesize?: number;
+
+  // Legacy / Backward Compatibility fields:
+  name?: string;
+  roll?: string;
+  stream_branch?: string;
+  year?: EligibleYear;
+  phone?: string;
   member2_name?: string;
   member2_roll?: string;
   member2_stream_branch?: string;

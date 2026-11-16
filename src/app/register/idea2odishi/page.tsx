@@ -30,12 +30,12 @@ export default function Idea2OdishiPage() {
     name: 'Idea2Odishi 2026 - Innovation & AI Pitching Challenge',
     description:
       'State-level innovation pitching competition where students develop solutions addressing real challenges across Odisha using AI, Machine Learning, and sustainable technology.',
-    startDate: '2026-03-20T10:00:00+05:30',
-    endDate: '2026-03-21T17:00:00+05:30',
-    locationName: 'NIST University Campus, Palur Hills',
+    startDate: '2026-11-26T11:00:00+05:30',
+    endDate: '2026-11-27T15:30:00+05:30',
+    locationName: 'NIST Seminar Hall 1 & Auditorium, NIST University Campus',
     locationAddress: 'Palur Hills, Berhampur, Odisha 761008',
     url: 'https://data-science-club-nist.vercel.app/register/idea2odishi',
-    image: 'https://data-science-club-nist.vercel.app/images/sankalp_banner.webp',
+    image: 'https://data-science-club-nist.vercel.app/images/Idea2Odishi_images/Voxel%20Konark%20Temple%20by%20the%20Riverside-1.png',
   });
 
   return (
