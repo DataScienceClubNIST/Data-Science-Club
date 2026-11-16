@@ -31,7 +31,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
               <SafeImage
                 src={adv.photo}
                 fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
-                alt={adv.name}
+                alt={`${adv.name} - Faculty Advisor, Data Science Club, NIST University`}
                 fill
               />
             </div>
@@ -123,7 +123,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
               <SafeImage
                 src={tm.photo}
                 fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
-                alt={tm.name}
+                alt={`${tm.name} - ${tm.role || 'Member'}, Data Science Club, NIST University`}
                 fill
               />
             </div>
@@ -160,7 +160,7 @@ export default function TeamMemberCard({ member, isAdvisor = false }: TeamMember
               <SafeImage
                 src={tm.photo}
                 fallbackSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
-                alt={tm.name}
+                alt={`${tm.name} - ${tm.role || 'Member'}, Data Science Club, NIST University`}
                 fill
               />
             </div>

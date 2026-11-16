@@ -36,7 +36,7 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
             <SafeImage
               src={event.image}
               fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
-              alt={event.title}
+              alt={`${event.title} - Data Science Club (DSC), NIST University`}
               fill
               fit="contain"
               className="group-hover:scale-[1.03] transition-transform duration-500 drop-shadow-md"
@@ -178,7 +178,7 @@ export default function EventCard({ event, isSankalp = false }: EventCardProps) 
                 <SafeImage
                   src={event.image}
                   fallbackSrc="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
-                  alt={event.title}
+                  alt={`${event.title} - Data Science Club (DSC), NIST University`}
                   fill
                   fit="contain"
                   className="drop-shadow-2xl"

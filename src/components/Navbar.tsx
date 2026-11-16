@@ -58,8 +58,8 @@ export default function Navbar() {
           <Link href="/" className="flex items-center space-x-3.5 group">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white p-1 border border-cyan-500/40 group-hover:border-cyan-400 transition-all duration-300 shadow-md group-hover:shadow-cyan-500/20">
               <Image
-                src="/images/logo.png"
-                alt="Data Science Club Logo"
+                src="/images/logo.webp"
+                alt="Data Science Club DSC NIST University Logo"
                 fill
                 className="object-contain p-0.5 group-hover:scale-105 transition-transform duration-300"
                 priority

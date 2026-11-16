@@ -22,8 +22,8 @@ export default function Footer() {
             <Link href="/" className="flex items-center space-x-3 group inline-flex">
               <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-white p-1 border border-cyan-500/40">
                 <Image
-                  src="/images/logo.png"
-                  alt="DSC Logo"
+                  src="/images/logo.webp"
+                  alt="Data Science Club DSC NIST University Logo"
                   fill
                   className="object-contain p-0.5"
                 />

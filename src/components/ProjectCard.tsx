@@ -19,7 +19,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           <SafeImage
             src={project.image}
             fallbackSrc="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
-            alt={project.name}
+            alt={`${project.name} - NIST Data Science Club Project`}
             fill
             className="group-hover:scale-105 transition-transform duration-500"
           />

@@ -50,7 +50,7 @@ export default function SafeImage({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={currentSrc}
-            alt={alt || 'Club Image'}
+            alt={alt || 'Data Science Club (DSC), NIST University'}
             onError={handleError}
             className={`w-full h-full ${fitClass} ${className}`}
           />
@@ -58,7 +58,7 @@ export default function SafeImage({
           <Image
             {...props}
             src={currentSrc}
-            alt={alt || 'Club Image'}
+            alt={alt || 'Data Science Club (DSC), NIST University'}
             fill
             unoptimized
             onError={handleError}
@@ -75,7 +75,7 @@ export default function SafeImage({
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={currentSrc}
-          alt={alt || 'Club Image'}
+          alt={alt || 'Data Science Club (DSC), NIST University'}
           width={width as any}
           height={height as any}
           onError={handleError}
@@ -85,7 +85,7 @@ export default function SafeImage({
         <Image
           {...props}
           src={currentSrc}
-          alt={alt || 'Club Image'}
+          alt={alt || 'Data Science Club (DSC), NIST University'}
           width={width || 400}
           height={height || 300}
           unoptimized

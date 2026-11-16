@@ -31,7 +31,7 @@ export default function AchievementCard({ achievement }: AchievementCardProps) {
             <SafeImage
               src={achievement.image}
               fallbackSrc="https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=800&q=80"
-              alt={achievement.title}
+              alt={`${achievement.title} - Data Science Club NIST Award`}
               fill
               className="group-hover:scale-105 transition-transform duration-500"
             />
