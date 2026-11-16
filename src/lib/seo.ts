@@ -1,5 +1,11 @@
 import type { Metadata } from 'next';
 
+const RAW_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://data-science-club-nist.vercel.app').trim();
+// Ensure unhyphenated legacy domain is always sanitized to official production domain
+const PRODUCTION_SITE_URL = RAW_SITE_URL.includes('datascienceclub-nist')
+  ? 'https://data-science-club-nist.vercel.app'
+  : (RAW_SITE_URL || 'https://data-science-club-nist.vercel.app');
+
 export const SITE_CONFIG = {
   name: 'Data Science Club, NIST University',
   shortName: 'DSC NIST',
@@ -21,7 +27,7 @@ export const SITE_CONFIG = {
   ],
   description:
     'Discover the Data Science Club (DSC) at NIST University. Explore AI, Machine Learning, Data Science, Deep Learning, Web Development, technical events, projects, workshops and student innovations in Berhampur, Odisha.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://data-science-club-nist.vercel.app',
+  url: PRODUCTION_SITE_URL,
   email: 'data.science.club@nist.edu',
   phone: '+91-94370-00000',
   parentUniversity: {

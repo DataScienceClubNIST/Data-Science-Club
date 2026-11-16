@@ -70,6 +70,21 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'datascienceclub-nist.vercel.app',
+          },
+        ],
+        destination: 'https://data-science-club-nist.vercel.app/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

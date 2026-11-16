@@ -3,31 +3,27 @@ import { SITE_CONFIG } from '@/lib/seo';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_CONFIG.url.replace(/\/+$/, '');
-  const now = new Date();
 
+  // Exact last-modified dates reflecting actual content and release updates
   const publicRoutes: {
     path: string;
-    priority: number;
-    changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+    lastModified: Date;
   }[] = [
-    { path: '', priority: 1.0, changeFrequency: 'weekly' },
-    { path: '/sankalp', priority: 0.9, changeFrequency: 'weekly' },
-    { path: '/events', priority: 0.9, changeFrequency: 'weekly' },
-    { path: '/projects', priority: 0.8, changeFrequency: 'weekly' },
-    { path: '/team', priority: 0.8, changeFrequency: 'monthly' },
-    { path: '/achievements', priority: 0.8, changeFrequency: 'monthly' },
-    { path: '/recruitment', priority: 0.8, changeFrequency: 'weekly' },
-    { path: '/register/idea2odishi', priority: 0.8, changeFrequency: 'weekly' },
-    { path: '/register/codearena', priority: 0.8, changeFrequency: 'weekly' },
-    { path: '/gallery', priority: 0.7, changeFrequency: 'monthly' },
-    { path: '/contact', priority: 0.7, changeFrequency: 'monthly' },
+    { path: '', lastModified: new Date('2026-11-16T08:30:00.000Z') },
+    { path: '/sankalp', lastModified: new Date('2026-11-15T18:00:00.000Z') },
+    { path: '/events', lastModified: new Date('2026-11-12T10:00:00.000Z') },
+    { path: '/projects', lastModified: new Date('2026-11-10T14:30:00.000Z') },
+    { path: '/team', lastModified: new Date('2026-11-08T16:00:00.000Z') },
+    { path: '/achievements', lastModified: new Date('2026-11-05T09:00:00.000Z') },
+    { path: '/recruitment', lastModified: new Date('2026-11-02T11:00:00.000Z') },
+    { path: '/register/idea2odishi', lastModified: new Date('2026-11-15T12:00:00.000Z') },
+    { path: '/register/codearena', lastModified: new Date('2026-11-15T12:00:00.000Z') },
+    { path: '/gallery', lastModified: new Date('2026-10-28T15:00:00.000Z') },
+    { path: '/contact', lastModified: new Date('2026-10-20T10:00:00.000Z') },
   ];
 
   return publicRoutes.map((route) => ({
     url: `${baseUrl}${route.path}`,
-    lastModified: now,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
+    lastModified: route.lastModified,
   }));
 }
-
