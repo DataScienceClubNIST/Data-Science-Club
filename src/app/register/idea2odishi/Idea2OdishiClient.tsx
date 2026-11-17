@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useData } from '@/context/DataContext';
 import { EligibleYear, TeamMemberDetail } from '@/types';
 import {
@@ -444,14 +445,25 @@ export default function Idea2OdishiClient() {
         {VOXEL_BACKGROUNDS.map((bg, idx) => (
           <div
             key={bg.id}
-            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
-              activeBgIndex === idx ? 'opacity-35' : 'opacity-0'
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              activeBgIndex === idx ? 'opacity-100' : 'opacity-0'
             }`}
-            style={{ backgroundImage: `url("${bg.src}")` }}
-          />
+          >
+            <Image
+              src={bg.src}
+              alt={bg.title}
+              fill
+              priority={idx === 0}
+              sizes="100vw"
+              unoptimized
+              className="object-cover object-center"
+            />
+          </div>
         ))}
-        {/* Soft vignette gradient so text is always high-contrast and crystal clear */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/90 to-slate-950" />
+
+        {/* Balanced dark scrim + gradient overlay: leaves vibrant voxel details clearly visible while guaranteeing crisp text readability */}
+        <div className="absolute inset-0 bg-slate-950/45" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/80" />
       </div>
 
       {/* FLOATING AMBIENT SCENE CONTROLLER (Bottom Right) */}
@@ -524,7 +536,7 @@ export default function Idea2OdishiClient() {
       <section id="about" className="relative z-10 py-12 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-amber-500/20">
         <div className="max-w-5xl mx-auto space-y-10">
           
-          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/40 bg-slate-900/85 p-6 sm:p-12 shadow-2xl backdrop-blur-md space-y-8">
+          <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/40 bg-slate-950/75 p-6 sm:p-12 shadow-2xl backdrop-blur-xl space-y-8">
             
             {/* Top Badges */}
             <div className="flex flex-wrap items-center gap-2">
@@ -637,7 +649,7 @@ export default function Idea2OdishiClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Day 1 Breakdown */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-amber-500/40 shadow-xl space-y-4">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950/75 backdrop-blur-xl border-2 border-amber-500/40 shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-md text-xs font-mono font-bold bg-amber-500 text-slate-950">
                   DAY 1 • 26 NOV 2026
@@ -670,7 +682,7 @@ export default function Idea2OdishiClient() {
             </div>
 
             {/* Day 2 Breakdown */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-cyan-500/40 shadow-xl space-y-4">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950/75 backdrop-blur-xl border-2 border-cyan-500/40 shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-md text-xs font-mono font-bold bg-cyan-500 text-slate-950">
                   DAY 2 • 27 NOV 2026
@@ -729,7 +741,7 @@ export default function Idea2OdishiClient() {
             {CATEGORIES.map((cat, idx) => (
               <div
                 key={idx}
-                className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 transition-all flex flex-col justify-between space-y-3"
+                className="p-5 rounded-2xl bg-slate-950/75 backdrop-blur-xl border border-slate-800 hover:border-amber-500/50 transition-all flex flex-col justify-between space-y-3"
               >
                 <div className="space-y-1.5">
                   <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${cat.color} inline-block`}>
@@ -824,7 +836,7 @@ export default function Idea2OdishiClient() {
           {/* STEP 1: MEMBERS INFO (1 OR 2 MEMBERS) */}
           {/* ========================================================== */}
           {currentStep === 1 && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/95 border-2 border-amber-500/30 shadow-2xl space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950/80 backdrop-blur-xl border-2 border-amber-500/30 shadow-2xl space-y-6">
               
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-3">
                 <div>
@@ -1103,7 +1115,7 @@ export default function Idea2OdishiClient() {
           {/* STEP 2: ABOUT THEIR IDEA */}
           {/* ========================================================== */}
           {currentStep === 2 && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/95 border-2 border-amber-500/30 shadow-2xl space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950/80 backdrop-blur-xl border-2 border-amber-500/30 shadow-2xl space-y-6">
               
               <div className="pb-4 border-b border-slate-800">
                 <div className="text-amber-400 text-xs font-mono font-bold uppercase tracking-wider">
@@ -1235,7 +1247,7 @@ export default function Idea2OdishiClient() {
           {/* STEP 3: UPLOAD PPT IN GOOGLE DRIVE */}
           {/* ========================================================== */}
           {currentStep === 3 && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/95 border-2 border-amber-500/30 shadow-2xl space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950/80 backdrop-blur-xl border-2 border-amber-500/30 shadow-2xl space-y-6">
               
               <div className="pb-4 border-b border-slate-800">
                 <div className="text-amber-400 text-xs font-mono font-bold uppercase tracking-wider">
@@ -1383,7 +1395,7 @@ export default function Idea2OdishiClient() {
           {/* STEP 4: JOIN WHATSAPP GROUP & FINAL SUBMISSION */}
           {/* ========================================================== */}
           {currentStep === 4 && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/95 border-2 border-amber-500/40 shadow-2xl space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950/80 backdrop-blur-xl border-2 border-amber-500/40 shadow-2xl space-y-6">
               
               <div className="pb-4 border-b border-slate-800">
                 <div className="text-amber-400 text-xs font-mono font-bold uppercase tracking-wider">
@@ -1513,7 +1525,7 @@ export default function Idea2OdishiClient() {
           {currentStep === 5 && successData && (
             <div className="space-y-6 animate-in zoom-in-95 duration-500">
               
-              <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/60 bg-slate-900 shadow-2xl p-6 sm:p-10 space-y-8">
+              <div className="relative rounded-3xl overflow-hidden border-2 border-amber-500/60 bg-slate-950/85 backdrop-blur-xl shadow-2xl p-6 sm:p-10 space-y-8">
                 
                 {/* Header Badge */}
                 <div className="text-center space-y-3">
